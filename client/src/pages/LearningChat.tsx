@@ -29,7 +29,7 @@ function LearningChat() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [speechEnabled, setSpeechEnabled] = useState(true);
   const speechSynthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chat]);
@@ -48,7 +48,7 @@ function LearningChat() {
     setIsLoading(true);
 
     try {
-      const res = await fetch("/api/ask", {
+      const res = await fetch(`${API_BASE_URL}/api/ask`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: questionText }),
