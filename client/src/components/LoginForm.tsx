@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
-import { cn } from "@/lib/utils";
+import { cn } from "../lib/utils";
 import { GoogleLogin } from "@react-oauth/google";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 
 export default function LoginForm() {
     const { login, isAuthenticated } = useAuth();
@@ -16,7 +16,7 @@ export default function LoginForm() {
     });
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+    const API_BASE_URL = "http://localhost:5000";
 
     // Redirect if already authenticated
     useEffect(() => {
