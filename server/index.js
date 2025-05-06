@@ -6,6 +6,8 @@ import { connect } from 'mongoose'
 import auth from './routes/auth.js'
 import wizard from './routes/wizard.js'
 import analysisRoutes from "./routes/analysis.js"
+import uploadRoutes from "./routes/upload.js"
+import explainRoute from './routes/explain.js';
 
 // Load environment variables
 config()
@@ -55,7 +57,7 @@ app.post('/api/ask', async (req, res) => {
 
   try {
     const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
-
+    
     const result = await model.generateContent({
       contents: [
         {
@@ -80,5 +82,8 @@ app.post('/api/ask', async (req, res) => {
 app.use('/api/auth', auth)
 app.use('/api/user', wizard)
 app.use("/api/analysis", analysisRoutes)
+app.use("/api/upload", uploadRoutes)
+app.use('/api/explain', explainRoute);
+
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))

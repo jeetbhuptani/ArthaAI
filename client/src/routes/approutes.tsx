@@ -5,6 +5,7 @@ import FinancialFormWizard from "../pages/FinancialFormWizard";
 import Authentication from "../pages/Authentication";
 import { ProtectedRoute } from "./ProtectedRoute";
 import Dashboard from "../pages/Dashboard";
+import BillsAnalyzer from "@/pages/BillAnalyzer";
 export const AppRoutes = () => {
   return (
     <Routes>
@@ -27,6 +28,7 @@ export const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+      <Route path="/analyzer" element={<BillsAnalyzer/>}/>
     </Routes>
   );
 };
