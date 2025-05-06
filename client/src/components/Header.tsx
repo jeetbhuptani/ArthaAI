@@ -49,12 +49,12 @@ export function Header() {
           {/* Auth & Theme Toggle */}
           <div className="flex items-center gap-4">
             <nav className="flex items-center gap-2">
-              <Link to="/login">
+              <Link to="/authentication">
                 <Button variant="ghost" size="sm" className="hover:text-teal-600 dark:hover:text-teal-400">
                   Login
                 </Button>
               </Link>
-              <Link to="/signup">
+              <Link to="/authentication">
                 <Button size="sm" className="bg-teal-600 hover:bg-teal-700 dark:bg-teal-700 dark:hover:bg-teal-600">
                   Sign Up
                 </Button>
