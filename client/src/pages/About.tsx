@@ -52,7 +52,7 @@ export default function AboutPage() {
     },
     {
       title: "LLM API",
-      description: "OpenAI API / AWS Bedrock",
+      description: "Gemini API / AWS Bedrock",
       icon: <Brain className="h-10 w-10 text-purple-500" />,
     },
     {
@@ -60,11 +60,11 @@ export default function AboutPage() {
       description: "AWS S3, API Gateway, Lambda, DynamoDB",
       icon: <Cloud className="h-10 w-10 text-blue-500" />,
     },
-    {
-      title: "Voice (Optional)",
-      description: "OpenAI Whisper / Amazon Transcribe & Polly",
-      icon: <Headphones className="h-10 w-10 text-pink-500" />,
-    },
+    // {
+    //   title: "Voice",
+    //   description: "OpenAI Whisper / Amazon Transcribe & Polly",
+    //   icon: <Headphones className="h-10 w-10 text-pink-500" />,
+    // },
   ];
 
   const features = [

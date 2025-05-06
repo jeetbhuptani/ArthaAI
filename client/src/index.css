@@ -118,3 +118,6 @@
     @apply bg-background text-foreground;
   }
 }
+[data-radix-popper-content-wrapper] {
+  z-index: 9999 !important; /* This targets Radix UI tooltip containers */
+}
