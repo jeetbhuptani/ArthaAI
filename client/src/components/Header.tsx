@@ -61,12 +61,12 @@ export function Header() {
               >
                 Learning
               </Link>
-              <Link
+              {/* <Link
                 to="/form"
                 className="text-sm font-medium transition-colors hover:text-teal-600 dark:hover:text-teal-400"
               >
                 Finances
-              </Link>
+              </Link> */}
               <Link
                 to="/about"
                 className="text-sm font-medium transition-colors hover:text-teal-600 dark:hover:text-teal-400"
