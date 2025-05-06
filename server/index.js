@@ -9,7 +9,7 @@ import analysisRoutes from "./routes/analysis.js";
 import uploadRoutes from "./routes/upload.js";
 import explainRoute from './routes/explain.js';
 import learningRoute from './routes/learning.js';
-
+import taxRoute from './routes/tax.js';
 // Load environment variables
 config();
 
@@ -44,6 +44,7 @@ app.use('/api/user', wizard);
 app.use('/api/analysis', analysisRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/explain', explainRoute);
+app.use('/api/tax', taxRoute)
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -74,6 +74,12 @@ export function Header() {
                 Bills Analyzer
               </Link>
               <Link
+                to="/tax"
+                className="text-sm font-medium transition-colors hover:text-teal-600 dark:hover:text-teal-400"
+              >
+                Tax Filing
+              </Link>
+              <Link
                 to="/about"
                 className="text-sm font-medium transition-colors hover:text-teal-600 dark:hover:text-teal-400"
               >

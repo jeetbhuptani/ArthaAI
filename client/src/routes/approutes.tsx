@@ -6,6 +6,7 @@ import Authentication from "../pages/Authentication";
 import { ProtectedRoute } from "./ProtectedRoute";
 import Dashboard from "../pages/Dashboard";
 import BillsAnalyzer from "@/pages/BillAnalyzer";
+import TaxFilingWizard from "@/pages/TaxFillingWizard";
 export const AppRoutes = () => {
   return (
     <Routes>
@@ -29,6 +30,14 @@ export const AppRoutes = () => {
         }
       />
       <Route path="/analyzer" element={<BillsAnalyzer/>}/>
+      <Route
+        path="/tax"
+        element={
+          <ProtectedRoute>
+            <TaxFilingWizard />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 };
