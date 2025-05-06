@@ -2,14 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { cn } from "@/lib/utils";
-import { GoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 
 export default function SignupForm() {
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const API_BASE_URL = "http://localhost:5000"
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -59,18 +58,6 @@ export default function SignupForm() {
       await login(data.token);
     } catch (err) {
       setError("Something went wrong. Please try again.");
-    }
-  };
-
-  const handleGoogleLoginSuccess = async (credentialResponse: any) => {
-    try {
-      const token = credentialResponse.credential;
-      if (token) {
-        await login(token);
-        // The navigation will happen automatically due to the useEffect above
-      }
-    } catch (error) {
-      console.error("Error processing Google login:", error);
     }
   };
 
@@ -153,23 +140,6 @@ export default function SignupForm() {
           <BottomGradient />
         </button>
 
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white dark:bg-gray-900 text-gray-500">
-              Or continue with
-            </span>
-          </div>
-        </div>
-
-        <div className="w-full flex items-center justify-center mb-4">
-          <GoogleLogin
-            onSuccess={handleGoogleLoginSuccess}
-            onError={() => setError("Google login failed")}
-          />
-        </div>
       </form>
     </div>
   );

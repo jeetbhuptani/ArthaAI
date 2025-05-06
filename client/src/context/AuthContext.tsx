@@ -1,8 +1,16 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
+interface User {
+  id: string;
+  firstname: string;
+  lastname: string;
+  email: string;
+  [key: string]: any; // Add additional fields as needed
+}
+
 interface AuthContextType {
   isAuthenticated: boolean;
-  user: any | null;
+  user: User | null;
   token: string | null;
   login: (token: string) => Promise<void>;
   logout: () => void;
@@ -20,7 +28,7 @@ const AuthContext = createContext<AuthContextType>({
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<any | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -31,23 +39,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const checkAuthStatus = async () => {
       try {
         const storedToken = localStorage.getItem("auth_token");
-        
+
         if (!storedToken) {
           setLoading(false);
           return;
         }
-        
+
         // Verify token validity
         const response = await fetch(`${API_BASE_URL}/api/auth/verify`, {
           headers: {
             Authorization: `Bearer ${storedToken}`,
           },
         });
-        
+
         if (response.ok) {
           const userData = await response.json();
           setToken(storedToken);
-          setUser(userData);
+          setUser(userData.user); // Assuming `user` is returned in the response
           setIsAuthenticated(true);
         } else {
           // Invalid token, clean up
@@ -59,7 +67,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setLoading(false);
       }
     };
-    
+
     checkAuthStatus();
   }, [API_BASE_URL]);
 
@@ -68,20 +76,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Store the token
       localStorage.setItem("auth_token", newToken);
       setToken(newToken);
-      
+
       // Fetch user data
       const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
         headers: {
           Authorization: `Bearer ${newToken}`,
         },
       });
-      
+
       if (response.ok) {
         const userData = await response.json();
-        setUser(userData);
+        setUser(userData); // Assuming the API returns the user object
         setIsAuthenticated(true);
       } else {
-        throw new Error("Failed to get user data");
+        throw new Error("Failed to fetch user data");
       }
     } catch (error) {
       console.error("Login error:", error);

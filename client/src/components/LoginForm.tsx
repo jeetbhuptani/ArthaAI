@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { cn } from "../lib/utils";
-import { GoogleLogin } from "@react-oauth/google";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -16,13 +15,13 @@ export default function LoginForm() {
     });
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
-    const API_BASE_URL = "http://localhost:5000";
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
     // Redirect if already authenticated
     useEffect(() => {
         if (isAuthenticated) {
             // Redirect to the page they were trying to access or dashboard
-            const from = location.state?.from?.pathname || "/dashboard";
+            const from = location.state?.from?.pathname || "/";
             navigate(from);
         }
     }, [isAuthenticated, navigate, location]);
@@ -63,20 +62,7 @@ export default function LoginForm() {
         }
     };
 
-    const handleGoogleLoginSuccess = async (credentialResponse: any) => {
-        try {
-            setLoading(true);
-            const token = credentialResponse.credential;
-            if (token) {
-                await login(token);
-                // The navigation will happen automatically due to the useEffect above
-            }
-        } catch (error) {
-            console.error("Error processing Google login:", error);
-            setError("Failed to process Google login");
-            setLoading(false);
-        }
-    };
+    
 
     return (
         <div className="px-8 pt-6">
@@ -135,25 +121,6 @@ export default function LoginForm() {
                     {loading ? "Loading..." : "Log In"}
                     <BottomGradient />
                 </button>
-
-                <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
-                    </div>
-                    <div className="relative flex justify-center text-sm">
-                        <span className="px-2 bg-white dark:bg-gray-900 text-gray-500">Or continue with</span>
-                    </div>
-                </div>
-
-                <div className="w-full flex items-center justify-center mb-4">
-                    <GoogleLogin
-                        onSuccess={handleGoogleLoginSuccess}
-                        onError={() => {
-                            setError("Google login failed");
-                            setLoading(false);
-                        }}
-                    />
-                </div>
             </form>
         </div>
     );
