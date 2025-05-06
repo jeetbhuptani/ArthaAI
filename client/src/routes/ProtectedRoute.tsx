@@ -10,7 +10,7 @@ export function ProtectedRoute({
   children, 
   redirectTo = "/authentication" 
 }: ProtectedRouteProps) {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated,user, loading } = useAuth();
   const location = useLocation();
 
   // Show nothing while checking authentication status
@@ -25,6 +25,10 @@ export function ProtectedRoute({
   if (!isAuthenticated) {
     // Save the location the user was trying to access
     return <Navigate to={redirectTo} state={{ from: location }} replace />;
+  }
+
+  if (isAuthenticated && user?.hasCompletedWizard === false) {
+    return <Navigate to="/form" />;
   }
 
   return <>{children}</>;

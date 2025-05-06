@@ -39,11 +39,27 @@ export default function FinancialFormWizard() {
     next() // Automatically go to next step after updating data
   }
 
-  const handleSubmit = () => {
-    console.log("Final Submitted Data:", formData)
-    alert("Form submitted! Check the console for details.")
-    localStorage.removeItem("financialFormData")
-    // Reset the form or redirect to another page
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user/complete-wizard`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(formData),
+      })
+
+      if (response.ok) {
+        alert("Form submitted successfully!")
+        localStorage.removeItem("financialFormData")
+        window.location.href = "/" // Redirect to home page
+      } else {
+        console.error("Failed to submit form")
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error)
+    }
   }
 
   const renderComplexValue = (value: any) => {
@@ -108,12 +124,69 @@ export default function FinancialFormWizard() {
 
         // Group sections with headers
         const getSection = (key: string) => {
-          if (["gender", "age"].includes(key)) return "Basic Information"
-          if (["investInAvenues", "investInStockMarket", "mostlyInvestIn", "investmentObjectives"].includes(key))
+          if (
+            [
+              "gender",
+              "age",
+              "marital_status",
+              "education_level",
+              "has_dependents",
+              "tier_city",
+              "life_stage",
+              "salaried_employee",
+            ].includes(key)
+          )
+            return "Basic Information"
+          if (
+            [
+              "investInAvenues",
+              "investInStockMarket",
+              "mostlyInvestIn",
+              "investmentObjectives",
+              "investment_experience_years",
+              "investment_knowledge",
+              "investment_preference",
+              "prefers_tax_saving",
+              "risk_tolerance_self_reported",
+              "risk_capacity",
+              "existing_investments",
+            ].includes(key)
+          )
             return "Investment Experience"
-          if (["investmentDuration", "monitoringFrequency", "expectedReturns", "investmentFactors"].includes(key))
+          if (
+            [
+              "investmentDuration",
+              "monitoringFrequency",
+              "expectedReturns",
+              "investmentFactors",
+              "investment_horizon_years",
+              "expected_return",
+              "short_term",
+              "medium_term",
+              "long_term",
+              "tax_bracket",
+            ].includes(key)
+          )
             return "Risk & Monitoring"
-          if (["financialGoals", "financialConcerns", "monthlyIncome", "monthlySavings", "existingDebts"].includes(key))
+          if (
+            [
+              "financialGoals",
+              "financialConcerns",
+              "monthlyIncome",
+              "monthlySavings",
+              "existingDebts",
+              "monthly_income",
+              "annual_income",
+              "monthly_expenses",
+              "emergency_fund",
+              "emergency_fund_months",
+              "existing_loans",
+              "debt_to_income",
+              "savings_rate",
+              "investment_capacity",
+              "insurance_coverage",
+            ].includes(key)
+          )
             return "Financial Goals & Situation"
           if (["knowledgeLevel", "willingnessToLearn", "extraContext"].includes(key)) return "Financial Knowledge"
           return "Other Information"
@@ -126,7 +199,7 @@ export default function FinancialFormWizard() {
           >
             <div className="flex flex-wrap items-center justify-between mb-2">
               <h3 className="font-medium capitalize text-teal-700 dark:text-teal-300">
-                {key.replace(/([A-Z])/g, " $1")}
+                {key.replace(/([A-Z])/g, " $1").replace(/_/g, " ")}
               </h3>
               <span className="text-xs bg-teal-100 dark:bg-teal-900/50 text-teal-800 dark:text-teal-200 px-2 py-1 rounded">
                 {getSection(key)}

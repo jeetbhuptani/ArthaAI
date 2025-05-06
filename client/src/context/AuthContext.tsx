@@ -5,6 +5,7 @@ interface User {
   firstname: string;
   lastname: string;
   email: string;
+  hasCompletedWizard: boolean;
   [key: string]: any; // Add additional fields as needed
 }
 

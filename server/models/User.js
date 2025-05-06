@@ -25,6 +25,10 @@ const UserSchema = new mongoose.Schema({
     minlength: 6,
     select: false
   },
+  hasCompletedWizard: {
+    type: Boolean,
+    default: false,
+  },
   googleId: {
     type: String
   },
@@ -32,19 +36,6 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
-  financialProfile: {
-    incomeRange: String,
-    expenses: [{
-      category: String, 
-      amount: Number
-    }],
-    savingsGoal: Number,
-    riskTolerance: {
-      type: String,
-      enum: ['Low', 'Medium', 'High']
-    },
-    investmentPreferences: [String]
-  }
 });
 
 // Encrypt password using bcrypt
