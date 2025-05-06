@@ -1,3 +1,5 @@
+import User from '../models/User.js';
+
 export async function completeWizard(req, res) {
   try {
     const user = await User.findById(req.user.id);

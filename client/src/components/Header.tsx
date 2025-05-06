@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { Moon, Sun, User, ChevronDown } from "lucide-react";
+import { User, ChevronDown } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
@@ -13,6 +13,7 @@ export function Header() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    localStorage.removeItem("auth_token"); 
     logout();
     setDropdownVisible(false);
     navigate("/authentication");

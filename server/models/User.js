@@ -29,6 +29,10 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  wizardData: {
+    type: mongoose.Schema.Types.Mixed,
+    default: {},
+  },
   googleId: {
     type: String
   },

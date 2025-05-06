@@ -7,7 +7,6 @@ import {
   verifyToken,
   updateProfile,
 } from '../controllers/authController.js';
-import { completeWizard } from '../controllers/completeWizard.js';
 import { protect } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -18,6 +17,5 @@ router.post('/google', googleAuth);
 router.get('/me', protect, getMe);
 router.get('/verify', protect, verifyToken);
 router.put('/profile', protect, updateProfile);
-router.post('/complete-wizard', protect, completeWizard);
 
 export default router;

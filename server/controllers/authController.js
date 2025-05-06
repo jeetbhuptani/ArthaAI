@@ -35,6 +35,7 @@ export const signup = async (req, res) => {
           lastname: user.lastname,
           email: user.email,
           hasCompletedWizard: user.hasCompletedWizard,
+          wizardData: user.wizardData,
         }
       });
     } else {
@@ -75,6 +76,7 @@ export const  login = async (req, res) => {
         lastname: user.lastname,
         email: user.email,
         hasCompletedWizard: user.hasCompletedWizard,
+        wizardData: user.wizardData,
       }
     });
   } catch (error) {
@@ -145,7 +147,6 @@ export const getMe = async (req, res) => {
       firstname: user.firstname,
       lastname: user.lastname,
       email: user.email,
-      financialProfile: user.financialProfile
     });
   } catch (error) {
     console.error(error);
@@ -187,7 +188,6 @@ export const updateProfile = async (req, res) => {
         firstname: updatedUser.firstname,
         lastname: updatedUser.lastname,
         email: updatedUser.email,
-        financialProfile: updatedUser.financialProfile
       });
     } else {
       res.status(404).json({ message: 'User not found' });

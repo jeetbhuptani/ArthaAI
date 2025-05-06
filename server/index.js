@@ -4,6 +4,9 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 import { config } from 'dotenv'
 import { connect } from 'mongoose'
 import auth from './routes/auth.js'
+import wizard from './routes/wizard.js'
+import analysisRoutes from "./routes/analysis.js"
+
 // Load environment variables
 config()
 
@@ -75,6 +78,7 @@ app.post('/api/ask', async (req, res) => {
 
 // --- Auth Routes ---
 app.use('/api/auth', auth)
-app.use('/api/user', auth)
+app.use('/api/user', wizard)
+app.use("/api/analysis", analysisRoutes)
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
