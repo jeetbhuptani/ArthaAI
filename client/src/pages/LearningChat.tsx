@@ -5,7 +5,15 @@ import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, Trash2, Send, Bot, User } from "lucide-react";
+import {
+  Loader2,
+  Trash2,
+  Send,
+  Bot,
+  User,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -18,6 +26,9 @@ function LearningChat() {
   const [isLoading, setIsLoading] = useState(false);
   const chatEndRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [speechEnabled, setSpeechEnabled] = useState(true);
+  const speechSynthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -28,10 +39,10 @@ function LearningChat() {
     inputRef.current?.focus();
   }, []);
 
-  const sendQuestion = async () => {
-    if (!question.trim() || isLoading) return;
+  const sendQuestion = async (questionText: string = question) => {
+    if (!questionText.trim() || isLoading) return;
 
-    const userMessage = { type: "user" as const, text: question };
+    const userMessage = { type: "user" as const, text: questionText };
     setChat((prev) => [...prev, userMessage]);
     setQuestion("");
     setIsLoading(true);
@@ -40,11 +51,26 @@ function LearningChat() {
       const res = await fetch("/api/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question }),
+        body: JSON.stringify({ question: questionText }),
       });
 
       const data = await res.json();
-      setChat((prev) => [...prev, { type: "bot", text: data.answer }]);
+      const botResponse: { type: "user" | "bot"; text: string } = { type: "bot", text: data.answer };
+      setChat((prev) => [...prev, botResponse]);
+      
+      // Speak the bot's response if speech is enabled
+      if (speechEnabled) {
+        // Convert markdown to plain text for speech
+        const plainText = data.answer
+          .replace(/\|.*?\|/g, '') // Remove table borders
+          .replace(/\[(.*?)\]\(.*?\)/g, '$1') // Convert links to just text
+          .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold markers
+          .replace(/\*(.*?)\*/g, '$1') // Remove italic markers
+          .replace(/#{1,6} (.*?)$/gm, '$1') // Remove heading markers
+          .replace(/\n/g, ' '); // Replace newlines with spaces
+        
+        speakText(plainText);
+      }
     } catch (err) {
       console.error(err);
       setChat((prev) => [
@@ -66,6 +92,81 @@ function LearningChat() {
       inputRef.current?.focus();
     }, 100);
   };
+  const speakText = (text: string) => {
+    if (!speechEnabled) return;
+    
+    // Cancel any ongoing speech
+    window.speechSynthesis.cancel();
+    
+    // Create a new utterance
+    const utterance = new SpeechSynthesisUtterance(text);
+    
+    // Get available voices
+    const voices = window.speechSynthesis.getVoices();
+    
+    // Try to find an Indian English voice, fallback to a female English voice
+    const indianVoice = voices.find(voice => 
+      voice.lang.includes('en-IN') || voice.lang.includes('hi-IN')
+    );
+    const femaleVoice = voices.find(voice => 
+      voice.lang.includes('en') && voice.name.includes('Female')
+    );
+    
+    utterance.voice = indianVoice || femaleVoice || voices[0];
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
+    
+    utterance.onstart = () => {
+      setIsSpeaking(true);
+    };
+    
+    utterance.onend = () => {
+      setIsSpeaking(false);
+    };
+    
+    utterance.onerror = (event) => {
+      console.error('Speech synthesis error', event);
+      setIsSpeaking(false);
+    };
+    
+    speechSynthesisRef.current = utterance;
+    window.speechSynthesis.speak(utterance);
+  };
+  
+  const toggleSpeech = () => {
+    setSpeechEnabled(!speechEnabled);
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+    }
+  };
+  useEffect(() => {
+    // Check if browser supports speech recognition
+    if (
+      !("webkitSpeechRecognition" in window) &&
+      !("SpeechRecognition" in window)
+    ) {
+      console.warn("Speech recognition not supported in this browser");
+      return;
+    }
+
+    // Initialize SpeechRecognition
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.lang = "en-IN"; // Set to Indian English
+    recognition.interimResults = false;
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      setQuestion(transcript);
+      // Small delay to let user see what was transcribed
+      setTimeout(() => {
+        sendQuestion(transcript);
+      }, 500);
+    };
+  }, []);
 
   return (
     <div className="max-w-3xl mx-auto p-4 md:p-6 space-y-4">
@@ -218,15 +319,26 @@ function LearningChat() {
           onKeyDown={handleKeyPress}
           placeholder="Ask your financial question..."
           className="border-zinc-300 dark:border-zinc-700 focus-visible:ring-teal-500"
-          disabled={isLoading}
         />
         <Button
-          onClick={sendQuestion}
+          onClick={() => sendQuestion()}
           disabled={isLoading || !question.trim()}
           className="bg-teal-600 hover:bg-teal-700 dark:bg-teal-700 dark:hover:bg-teal-600"
         >
           <Send className="w-4 h-4 mr-2" />
           Ask
+        </Button>
+        <Button
+          variant="outline"
+          onClick={toggleSpeech}
+          className="px-3 border-zinc-300 dark:border-zinc-700"
+          title={speechEnabled ? "Mute voice responses" : "Enable voice responses"}
+        >
+          {speechEnabled ? (
+            <Volume2 className={`w-4 h-4 ${isSpeaking ? 'text-teal-600 dark:text-teal-400' : ''}`} />
+          ) : (
+            <VolumeX className="w-4 h-4" />
+          )}
         </Button>
         <Button
           variant="outline"
