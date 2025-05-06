@@ -3,6 +3,7 @@ import About from './pages/About';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import SmoothScroll from './components/common/SmoothScroll';
+import LearningChat from './pages/LearningChat';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Routes>
             <Route path="/" element={<div>Welcome to Artha AI</div>} />
             <Route path="/about" element={<About />} />
+            <Route path="/learning" element={<LearningChat />} />
           </Routes>
         </main>
         <Footer />

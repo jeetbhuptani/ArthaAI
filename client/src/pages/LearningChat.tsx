@@ -1,0 +1,249 @@
+"use client";
+
+import type React from "react";
+import { useState, useRef, useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Loader2, Trash2, Send, Bot, User } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
+function LearningChat() {
+  const [question, setQuestion] = useState("");
+  const [chat, setChat] = useState<{ type: "user" | "bot"; text: string }[]>(
+    []
+  );
+  const [isLoading, setIsLoading] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chat]);
+
+  useEffect(() => {
+    // Focus the input field when the component mounts
+    inputRef.current?.focus();
+  }, []);
+
+  const sendQuestion = async () => {
+    if (!question.trim() || isLoading) return;
+
+    const userMessage = { type: "user" as const, text: question };
+    setChat((prev) => [...prev, userMessage]);
+    setQuestion("");
+    setIsLoading(true);
+
+    try {
+      const res = await fetch("/api/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question }),
+      });
+
+      const data = await res.json();
+      setChat((prev) => [...prev, { type: "bot", text: data.answer }]);
+    } catch (err) {
+      console.error(err);
+      setChat((prev) => [
+        ...prev,
+        { type: "bot", text: "Oops! Something went wrong. Please try again." },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") sendQuestion();
+  };
+
+  const resetChat = () => {
+    setChat([]);
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 100);
+  };
+
+  return (
+    <div className="max-w-3xl mx-auto p-4 md:p-6 space-y-4">
+      <motion.header
+        className="text-center mb-6"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="bg-gradient-to-r from-teal-50 to-emerald-50 dark:from-teal-900/30 dark:to-emerald-900/30 p-6 rounded-xl shadow-sm">
+          <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-600 to-emerald-600 dark:from-teal-400 dark:to-emerald-400">
+            ArthaAI Financial Assistant
+          </h1>
+          <p className="text-zinc-600 dark:text-zinc-400 mt-2">
+            Ask me anything about personal finance, investments, or money
+            management
+          </p>
+        </div>
+      </motion.header>
+
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-teal-50/50 to-emerald-50/50 dark:from-teal-900/10 dark:to-emerald-900/10 rounded-xl -z-10" />
+
+        <div className="h-[500px] md:h-[600px] overflow-y-auto p-4 md:p-6 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-sm shadow-md">
+          {chat.length === 0 ? (
+            <div className="h-full flex flex-col items-center justify-center text-center p-6 text-zinc-500 dark:text-zinc-400 space-y-4">
+              <div className="w-16 h-16 rounded-full bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center">
+                <Bot className="w-8 h-8 text-teal-600 dark:text-teal-400" />
+              </div>
+              <div className="space-y-2 max-w-md">
+                <h3 className="text-xl font-medium text-zinc-800 dark:text-zinc-200">
+                  Welcome to ArthaAI
+                </h3>
+                <p>
+                  I can help you understand financial concepts, plan your
+                  budget, or learn about investments. What would you like to
+                  know?
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 w-full max-w-md mt-4">
+                {[
+                  "How much to save monthly?",
+                  "What is SIP?",
+                  "Fixed deposit vs gold?",
+                  "How to reduce EMI burden?",
+                ].map((suggestion, i) => (
+                  <Button
+                    key={i}
+                    variant="outline"
+                    className="text-left justify-start h-auto py-2 border-teal-200 dark:border-teal-800 hover:bg-teal-50 dark:hover:bg-teal-900/20"
+                    onClick={() => {
+                      setQuestion(suggestion);
+                      setTimeout(() => {
+                        sendQuestion();
+                      }, 100);
+                    }}
+                  >
+                    {suggestion}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <AnimatePresence>
+              <div className="space-y-4">
+                {chat.map((msg, idx) => (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className={`flex ${
+                      msg.type === "user" ? "justify-end" : "justify-start"
+                    }`}
+                  >
+                    <div
+                      className={`flex gap-2 max-w-[85%] ${
+                        msg.type === "user" ? "flex-row-reverse" : "flex-row"
+                      }`}
+                    >
+                      <div
+                        className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center ${
+                          msg.type === "user"
+                            ? "bg-blue-100 dark:bg-blue-900/30"
+                            : "bg-teal-100 dark:bg-teal-900/30"
+                        }`}
+                      >
+                        {msg.type === "user" ? (
+                          <User className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                        ) : (
+                          <Bot className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                        )}
+                      </div>
+                      <Card
+                        className={`w-fit ${
+                          msg.type === "user"
+                            ? "bg-blue-50 dark:bg-blue-900/20 border-blue-100 dark:border-blue-800"
+                            : "bg-teal-50 dark:bg-teal-900/20 border-teal-100 dark:border-teal-800"
+                        }`}
+                      >
+                        <CardContent className="p-3 md:p-4 text-sm md:text-base">
+                          {msg.type === "user" ? (
+                            msg.text
+                          ) : (
+                            <div className="prose dark:prose-invert prose-sm max-w-none">
+                              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                {msg.text}
+                              </ReactMarkdown>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </motion.div>
+                ))}
+                <div ref={chatEndRef} />
+              </div>
+            </AnimatePresence>
+          )}
+
+          {isLoading && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex justify-start mt-4"
+            >
+              <div className="flex gap-2">
+                <div className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center bg-teal-100 dark:bg-teal-900/30">
+                  <Bot className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                </div>
+                <Card className="w-fit bg-teal-50 dark:bg-teal-900/20 border-teal-100 dark:border-teal-800">
+                  <CardContent className="p-3 md:p-4">
+                    <div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Thinking...</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </motion.div>
+          )}
+        </div>
+      </div>
+
+      <div className="flex gap-2 mt-4">
+        <Input
+          ref={inputRef}
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+          onKeyDown={handleKeyPress}
+          placeholder="Ask your financial question..."
+          className="border-zinc-300 dark:border-zinc-700 focus-visible:ring-teal-500"
+          disabled={isLoading}
+        />
+        <Button
+          onClick={sendQuestion}
+          disabled={isLoading || !question.trim()}
+          className="bg-teal-600 hover:bg-teal-700 dark:bg-teal-700 dark:hover:bg-teal-600"
+        >
+          <Send className="w-4 h-4 mr-2" />
+          Ask
+        </Button>
+        <Button
+          variant="outline"
+          onClick={resetChat}
+          className="px-3 border-zinc-300 dark:border-zinc-700"
+          title="Clear chat"
+        >
+          <Trash2 className="w-4 h-4 text-zinc-600 dark:text-zinc-400" />
+        </Button>
+      </div>
+
+      <div className="text-center text-xs text-zinc-500 dark:text-zinc-400 mt-4">
+        ArthaAI learning is designed to provide general financial information,
+        not personalized financial advice.
+      </div>
+    </div>
+  );
+}
+
+export default LearningChat;
