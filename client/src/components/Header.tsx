@@ -77,7 +77,10 @@ export function Header() {
                 to="/tax"
                 className="text-sm font-medium transition-colors hover:text-teal-600 dark:hover:text-teal-400"
               >
-                Tax Filing
+                Tax Filling
+              </Link>
+              <Link to="/comparator" className="text-sm font-medium transition-colors hover:text-teal-600 dark:hover:text-teal-400">
+                Investment Comparator
               </Link>
               <Link
                 to="/about"

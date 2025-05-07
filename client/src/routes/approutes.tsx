@@ -7,6 +7,7 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import Dashboard from "../pages/Dashboard";
 import BillsAnalyzer from "@/pages/BillAnalyzer";
 import TaxFilingWizard from "@/pages/TaxFillingWizard";
+import InvestmentComparator from "@/pages/InvestmentComparator";
 export const AppRoutes = () => {
   return (
     <Routes>
@@ -38,6 +39,7 @@ export const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+      <Route path="/comparator" element={<InvestmentComparator/>} />
     </Routes>
   );
 };
