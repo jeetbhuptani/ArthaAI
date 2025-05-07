@@ -102,7 +102,7 @@ export default function PortfolioInsights({ analysisData }: { analysisData: Anal
         <CardContent className="pt-6 flex justify-center">
           <div className="w-full h-[250px]">
             <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
+                <PieChart>
                 <Pie 
                   data={chartData} 
                   dataKey="value" 
@@ -113,12 +113,12 @@ export default function PortfolioInsights({ analysisData }: { analysisData: Anal
                   label
                 >
                   {chartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip formatter={(value) => [`${value}%`, 'Allocation']} />
+                <Tooltip formatter={(value, name) => [`${value}%`, name]} />
                 <Legend />
-              </PieChart>
+                </PieChart>
             </ResponsiveContainer>
           </div>
         </CardContent>

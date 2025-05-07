@@ -16,22 +16,58 @@ export async function analyzeUserPortfolio(req, res) {
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     const prompt = `
-You are a financial advisor with expertise in Indian finance. Analyze the following user's financial and investment profile and return a JSON object with the following details:
+You are an expert financial advisor specializing in Indian personal finance and investments. Analyze the following user's financial profile and return a JSON object that follows the exact structure specified below.
 
-- "riskLevel": (Low, Moderate, High)
-- "investmentDistribution": an object with asset types (e.g., "Equity Mutual Funds", "Fixed Deposits", "Public Provident Fund (PPF)", "National Pension Scheme (NPS)", "Real Estate", etc.) as keys and the corresponding percentage allocation as values.
-- "insights": 3-5 personalized insights based on the user's financial situation, considering aspects such as retirement planning, tax-saving options (e.g., 80C, NPS), and risk diversification.
-- "nextSteps": 3 action-oriented next steps to improve their financial situation, such as rebalancing their portfolio, increasing emergency savings, or investing in tax-saving instruments.
+USER PROFILE ANALYSIS REQUIREMENTS:
+1. Determine the appropriate risk level based on age, income, experience, self-reported tolerance, and life stage.
+2. Create an investment distribution optimized for their goals, timeline, and risk profile.
+3. Generate personalized insights addressing their specific financial situation.
+4. Provide actionable next steps relevant to Indian investors.
 
-Ensure to provide investment suggestions specific to the Indian market, including options like Mutual Funds (ELSS), NPS, and other popular Indian investment vehicles.
+OUTPUT FORMAT:
+{
+  "riskLevel": "Low" | "Moderate" | "High",
+  "investmentDistribution": {
+    "Equity Mutual Funds": number,
+    "Debt Mutual Funds": number,
+    "Gold": number,
+    "Fixed Deposits": number,
+    // Include other appropriate Indian investment vehicles
+    // All percentages should add up to 100
+  },
+  "insights": [
+    "Insight 1",
+    "Insight 2",
+    "Insight 3",
+    // 3-5 personalized insights
+  ],
+  "nextSteps": [
+    "Action 1",
+    "Action 2",
+    "Action 3"
+  ]
+}
 
-Respond ONLY with a JSON object, with no additional text.
+INDIAN FINANCE CONTEXT:
+- Consider tax-saving instruments under Section 80C (ELSS, PPF, NPS)
+- Include market-appropriate vehicles like sovereign gold bonds, RBI bonds
+- Consider debt options like corporate FDs and government schemes
+- Factor in the user's tax bracket (${user.wizardData.tax_bracket || "Unknown"})
 
+USER SPECIFIC CONSIDERATIONS:
+- Age: ${user.wizardData.age} (${user.wizardData.life_stage} life stage)
+- Goals: ${JSON.stringify(user.wizardData.financialGoals || [])}
+- Risk tolerance: ${user.wizardData.risk_tolerance_self_reported || "Unknown"}/10
+- Investment horizon: ${user.wizardData.investment_horizon_years || "Unknown"} years
+- Emergency fund: ₹${user.wizardData.emergency_fund || 0} (${user.wizardData.emergency_fund_months || 0} months)
+- Monthly income: ₹${user.wizardData.monthly_income || 0}
+- Investment capacity: ₹${user.wizardData.investment_capacity || 0}
+- Existing investments: ₹${user.wizardData.existing_investments || 0}
+- Financial concerns: ${JSON.stringify(user.wizardData.financialConcerns || [])}
 
-User Data:
-${JSON.stringify(user.wizardData, null, 2)}
-    `;
-
+IMPORTANT: Respond ONLY with a valid JSON object matching the structure above. No preamble, explanation, or markdown formatting.
+`;
+    console.log("Prompt sent to AI:", prompt);
     const result = await model.generateContent(prompt);
     let response = result.response.text();
 
