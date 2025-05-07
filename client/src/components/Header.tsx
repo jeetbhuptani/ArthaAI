@@ -5,7 +5,6 @@ import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import Logo from "../assets/logo.png";
-
 export function Header() {
   const { isAuthenticated, user, logout } = useAuth();
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -13,7 +12,7 @@ export function Header() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("auth_token"); 
+    localStorage.removeItem("auth_token");
     logout();
     setDropdownVisible(false);
     navigate("/authentication");
@@ -79,7 +78,10 @@ export function Header() {
               >
                 Tax Filling
               </Link>
-              <Link to="/comparator" className="text-sm font-medium transition-colors hover:text-teal-600 dark:hover:text-teal-400">
+              <Link
+                to="/comparator"
+                className="text-sm font-medium transition-colors hover:text-teal-600 dark:hover:text-teal-400"
+              >
                 Investment Comparator
               </Link>
               <Link

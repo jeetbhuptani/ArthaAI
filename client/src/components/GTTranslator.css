@@ -1,0 +1,20 @@
+.gtranslate_wrapper {
+    position: fixed !important;
+    bottom: 70px; /* Position above the footer */
+    right: 20px;
+    z-index: 1000; /* High z-index to stay on top */
+  }
+  
+  /* Style overrides for the GTTranslate widget */
+  .gt_float_switcher {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+    border-radius: 8px !important;
+  }
+  
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+    .gt_float_switcher {
+      background-color: #27272a !important; 
+      border-color: #3f3f46 !important;
+    }
+  }

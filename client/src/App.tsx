@@ -6,6 +6,7 @@ import { AppRoutes } from "./routes/approutes";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { AuthProvider } from "./context/AuthContext";
 import { LoadingProvider } from "./context/LoadingProvider";
+import GTTranslator from "./components/GTTranslator";
 
 function App() {
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -22,6 +23,7 @@ function App() {
           </GoogleOAuthProvider>
         </main>
         <Footer />
+        <GTTranslator />
       </div>
       </AuthProvider>
     </LoadingProvider>
