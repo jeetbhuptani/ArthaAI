@@ -85,6 +85,12 @@ export function Header() {
                 Investment Comparator
               </Link>
               <Link
+                to="/news"
+                className="text-sm font-medium transition-colors hover:text-teal-600 dark:hover:text-teal-400"
+              >
+                Updates
+              </Link>
+              <Link
                 to="/about"
                 className="text-sm font-medium transition-colors hover:text-teal-600 dark:hover:text-teal-400"
               >

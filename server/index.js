@@ -11,6 +11,7 @@ import explainRoute from './routes/explain.js';
 import learningRoute from './routes/learning.js';
 import taxRoute from './routes/tax.js';
 import compareRoute from './routes/comparator.js';
+import newsRoute from './routes/news.js';
 // Load environment variables
 config();
 
@@ -47,6 +48,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/explain', explainRoute);
 app.use('/api/tax', taxRoute)
 app.use('/api/compare', compareRoute);
+app.use('/api/news', newsRoute);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

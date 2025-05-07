@@ -8,6 +8,7 @@ import Dashboard from "../pages/Dashboard";
 import BillsAnalyzer from "@/pages/BillAnalyzer";
 import TaxFilingWizard from "@/pages/TaxFillingWizard";
 import InvestmentComparator from "@/pages/InvestmentComparator";
+import News from "@/pages/News";
 export const AppRoutes = () => {
   return (
     <Routes>
@@ -40,6 +41,7 @@ export const AppRoutes = () => {
         }
       />
       <Route path="/comparator" element={<InvestmentComparator/>} />
+      <Route path="/news" element={ <News/> }/>
     </Routes>
   );
 };
