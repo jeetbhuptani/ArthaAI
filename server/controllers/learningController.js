@@ -2,7 +2,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { config } from "dotenv";
 import { v4 as uuidv4 } from "uuid";
 import mongoose from "mongoose";
-
+import { verifyToken } from "../utils/jwtHelper.js";
 config();
 
 // Initialize Gemini AI
@@ -59,15 +59,90 @@ const formatChatHistory = (history) => {
 
 // Main chat function with conversation history
 export const askArthaAI = async (req, res) => {
-  const { question, history = [], conversationId } = req.body;
-  const userId = req.user?.id; // Assuming auth middleware sets this
+  const {
+    question,
+    history = [],
+    conversationId,
+    preferUserData = false,
+  } = req.body;
+
+  // Log request details for debugging
+  console.log("Request received:", {
+    question: question.substring(0, 30) + "...",
+    historyLength: history.length,
+    preferUserData,
+    authenticated: !!req.user,
+  });
+  let userId;
+  let user;
+  let userContext = "";
+
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    // Get token from header
+    const token = req.headers.authorization.split(" ")[1];
+    try {
+      // Verify token (ensure verifyToken is properly imported)
+      const decoded = verifyToken(token);
+
+      // Fetch user ID from decoded token
+      userId = decoded.id;
+
+      // Fetch user data if preferUserData is true
+      if (userId && preferUserData) {
+        user = await mongoose.model("User").findById(userId);
+
+        console.log(
+          "User found:",
+          !!user,
+          "Has wizard data:",
+          !!user?.wizardData
+        );
+
+        if (user?.wizardData) {
+          // Format user data for the AI prompt with clearer instruction
+          userContext = `
+\nIMPORTANT - USER FINANCIAL PROFILE:
+The user has shared their financial details below. Use this information to personalize your advice:
+- Age: ${user.wizardData.age || "Unknown"}
+- Monthly Income: ₹${user.wizardData.monthly_income || "Unknown"}
+- Investment Experience: ${
+            user.wizardData.investment_experience_years || "Unknown"
+          } years
+- Risk Tolerance (self-reported): ${
+            user.wizardData.risk_tolerance_self_reported || "Unknown"
+          }/10
+- Financial Goals: ${JSON.stringify(user.wizardData.financialGoals || [])}
+- Tax Bracket: ${user.wizardData.tax_bracket || "Unknown"}
+- Life Stage: ${user.wizardData.life_stage || "Unknown"}
+
+YOU MUST reference this information when providing financial advice.
+`;
+        }
+      }
+    } catch (error) {
+      console.error("Token verification or user fetching failed:", error);
+      return res.status(401).json({ error: "Invalid token or user not found" });
+    }
+  }
 
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-    // Construct prompt with history if available
+    // Construct prompt with history if available and user context if requested
     const chatHistory = formatChatHistory(history);
-    const prompt = `${SYSTEM_PROMPT}\n\n${chatHistory}Q: ${question}\n\nA:`;
+    // Make the userContext more prominent in the prompt
+    const prompt = `${SYSTEM_PROMPT}${userContext}\n\n${chatHistory}Q: ${question}\n\nA:`;
+
+    // Log just the structure of the prompt for debugging but not the full content
+    console.log("Prompt structure:", {
+      hasSystemPrompt: SYSTEM_PROMPT.length > 0,
+      hasUserContext: userContext.length > 0,
+      hasChatHistory: chatHistory.length > 0,
+      questionLength: question.length,
+    });
 
     const result = await model.generateContent({
       contents: [{ parts: [{ text: prompt }] }],
@@ -283,22 +358,22 @@ export const getConversation = async (req, res) => {
 export const deleteConversation = async (req, res) => {
   const { id } = req.params;
   const userId = req.user?.id;
-  
+
   if (!userId) {
-    return res.status(401).json({ error: 'Authentication required' });
+    return res.status(401).json({ error: "Authentication required" });
   }
-  
+
   try {
     // Only delete if it belongs to this user
     const result = await Conversation.findOneAndDelete({ id, userId });
-    
+
     if (!result) {
-      return res.status(404).json({ error: 'Conversation not found' });
+      return res.status(404).json({ error: "Conversation not found" });
     }
-    
-    res.json({ success: true, message: 'Conversation deleted successfully' });
+
+    res.json({ success: true, message: "Conversation deleted successfully" });
   } catch (error) {
-    console.error('Error deleting conversation:', error);
-    res.status(500).json({ error: 'Failed to delete conversation' });
+    console.error("Error deleting conversation:", error);
+    res.status(500).json({ error: "Failed to delete conversation" });
   }
 };

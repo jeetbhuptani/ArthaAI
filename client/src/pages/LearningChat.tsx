@@ -15,6 +15,7 @@ import {
   VolumeX,
   Save,
   Download,
+  Database,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
@@ -40,7 +41,7 @@ function LearningChat() {
     { id: string; title: string }[]
   >([]);
   const [showSavedConversations, setShowSavedConversations] = useState(false);
-
+  const [preferUserData, setPreferUserData] = useState(false);
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chat]);
@@ -115,42 +116,44 @@ function LearningChat() {
 
   const sendQuestion = async (questionText: string = question) => {
     if (!questionText.trim() || isLoading) return;
-  
+
     const userMessage = { type: "user" as const, text: questionText };
     setChat((prev) => [...prev, userMessage]);
     setQuestion("");
     setIsLoading(true);
-  
+
     try {
       // Get token if authenticated
       const token = localStorage.getItem("auth_token");
       const headers: Record<string, string> = {
         "Content-Type": "application/json",
       };
-      
+
       // Add Authorization header if token exists
       if (token) {
         headers["Authorization"] = `Bearer ${token}`;
       }
-      
+
+      // Always send the request with the same structure, just toggle preferUserData flag
       const res = await fetch(`${API_BASE_URL}/api/ask`, {
         method: "POST",
         headers,
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           question: questionText,
-          conversationId, // Include conversation ID if it exists
-          history: chat // Send the conversation history for context
+          conversationId,
+          history: chat,
+          preferUserData: preferUserData, // This will be false when not toggled
         }),
         credentials: "include",
       });
-  
+
       const data = await res.json();
-      
+
       // Update conversation ID if one is returned from the backend
       if (data.conversationId) {
         setConversationId(data.conversationId);
       }
-      
+
       const botResponse = { type: "bot" as const, text: data.answer };
       setChat((prev) => [...prev, botResponse]);
 
@@ -386,7 +389,7 @@ function LearningChat() {
     }
   };
   return (
-    <div className="max-w-3xl mx-auto p-4 md:p-6 space-y-4">
+    <div className="max-w-7xl mx-auto p-4 md:p-6 space-y-4">
       <motion.header
         className="text-center mb-6"
         initial={{ opacity: 0, y: -20 }}
@@ -563,7 +566,24 @@ function LearningChat() {
             <VolumeX className="w-4 h-4" />
           )}
         </Button>
-
+        {isAuthenticated && (
+          <Button
+            variant="outline"
+            onClick={() => setPreferUserData(!preferUserData)}
+            className={`px-3 border-zinc-300 dark:border-zinc-700 ${
+              preferUserData ? "bg-teal-100 dark:bg-teal-900/30" : ""
+            }`}
+            title="Prefer User Data"
+          >
+            <Database
+              className={`w-4 h-4 ${
+                preferUserData
+                  ? "text-teal-600 dark:text-teal-400"
+                  : "text-zinc-600 dark:text-zinc-400"
+              }`}
+            />
+          </Button>
+        )}
         {/* Save button - only shown if authenticated and chat has messages */}
         {isAuthenticated && chat.length > 0 && (
           <Button

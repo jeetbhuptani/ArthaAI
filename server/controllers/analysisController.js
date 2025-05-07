@@ -67,7 +67,6 @@ USER SPECIFIC CONSIDERATIONS:
 
 IMPORTANT: Respond ONLY with a valid JSON object matching the structure above. No preamble, explanation, or markdown formatting.
 `;
-    console.log("Prompt sent to AI:", prompt);
     const result = await model.generateContent(prompt);
     let response = result.response.text();
 
