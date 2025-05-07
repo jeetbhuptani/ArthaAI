@@ -2,6 +2,10 @@ import User from '../models/User.js';
 import { verifyToken } from '../utils/jwtHelper.js';
 
 export const protect = async (req, res, next) => {
+
+  if(req.method === 'OPTIONS') {
+    return next();
+  }
   let token;
 
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
