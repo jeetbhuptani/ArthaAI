@@ -32,9 +32,6 @@ const formSchema = z.object({
   // Key Financial Concerns
   financialConcerns: z.array(z.string()).min(1, "Select at least one financial concern"),
 
-  // Current Financial Behavior
-  monthlyIncome: z.string().min(1, "Monthly income is required"),
-  monthlySavings: z.string().min(1, "Monthly savings is required"),
   existingDebts: z.string(),
 
   // Financial Knowledge Self-Assessment
@@ -101,13 +98,11 @@ export function ImprovedGoalsReasonsForm({ data, update }: ImprovedGoalsReasonsF
     defaultValues: {
       financialGoals: data.financialGoals || [{ goal: "", timeline: "", targetAmount: "", priority: "" }],
       financialConcerns: data.financialConcerns || [],
-      monthlyIncome: data.monthlyIncome || "",
-      monthlySavings: data.monthlySavings || "",
+      monthly_income: data.monthly_income || 0,
       existingDebts: data.existingDebts || "",
       knowledgeLevel: data.knowledgeLevel || "",
       willingnessToLearn: data.willingnessToLearn || "",
       extraContext: data.extraContext || "",
-      monthly_income: data.monthly_income || 0,
       annual_income: data.annual_income || 0,
       monthly_expenses: data.monthly_expenses || 0,
       emergency_fund: data.emergency_fund || 0,
@@ -130,12 +125,6 @@ export function ImprovedGoalsReasonsForm({ data, update }: ImprovedGoalsReasonsF
     }
     if (data.financialConcerns && data.financialConcerns.length > 0) {
       setValue("financialConcerns", data.financialConcerns)
-    }
-    if (data.monthlyIncome) {
-      setValue("monthlyIncome", data.monthlyIncome)
-    }
-    if (data.monthlySavings) {
-      setValue("monthlySavings", data.monthlySavings)
     }
     if (data.existingDebts) {
       setValue("existingDebts", data.existingDebts)
@@ -524,30 +513,6 @@ export function ImprovedGoalsReasonsForm({ data, update }: ImprovedGoalsReasonsF
             {/* Current Financial Behavior */}
             <div className="space-y-4">
               <h3 className="text-lg font-medium text-teal-700 dark:text-teal-300">Additional Financial Information</h3>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="monthlyIncome">Monthly Income (Text)</Label>
-                  <Input
-                    id="monthlyIncome"
-                    {...register("monthlyIncome")}
-                    placeholder="e.g., ₹5,000"
-                    className="border-zinc-300 dark:border-zinc-700 focus:ring-teal-500 dark:focus:ring-teal-400"
-                  />
-                  {errors.monthlyIncome && <p className="text-red-500 text-sm">{errors.monthlyIncome.message}</p>}
-                </div>
-
-                <div>
-                  <Label htmlFor="monthlySavings">Monthly Savings (Text)</Label>
-                  <Input
-                    id="monthlySavings"
-                    {...register("monthlySavings")}
-                    placeholder="e.g., ₹1,000"
-                    className="border-zinc-300 dark:border-zinc-700 focus:ring-teal-500 dark:focus:ring-teal-400"
-                  />
-                  {errors.monthlySavings && <p className="text-red-500 text-sm">{errors.monthlySavings.message}</p>}
-                </div>
-              </div>
 
               <div>
                 <Label htmlFor="existingDebts">Existing Debts (if any)</Label>

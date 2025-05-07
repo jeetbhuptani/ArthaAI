@@ -16,7 +16,6 @@ import { ArrowRight, LineChart } from 'lucide-react'
 import { Input } from "@/components/ui/input"
 
 const formSchema = z.object({
-  investmentDuration: z.string().min(1, "Please select an investment duration"),
   monitoringFrequency: z.string().min(1, "Please select a monitoring frequency"),
   expectedReturns: z.string().min(1, "Please select an expected return range"),
   investmentFactors: z.array(z.string()).min(1, "Select at least one factor"),
@@ -49,7 +48,6 @@ export function RiskMonitoringForm({ data, update }: RiskMonitoringFormProps) {
   } = useForm<RiskMonitoringData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      investmentDuration: data.investmentDuration || "",
       monitoringFrequency: data.monitoringFrequency || "",
       expectedReturns: data.expectedReturns || "",
       investmentFactors: data.investmentFactors || [],
@@ -65,9 +63,6 @@ export function RiskMonitoringForm({ data, update }: RiskMonitoringFormProps) {
 
   // Pre-fill form with existing data
   useEffect(() => {
-    if (data.investmentDuration) {
-      setValue("investmentDuration", data.investmentDuration)
-    }
     if (data.monitoringFrequency) {
       setValue("monitoringFrequency", data.monitoringFrequency)
     }
@@ -213,29 +208,6 @@ export function RiskMonitoringForm({ data, update }: RiskMonitoringFormProps) {
                   </Label>
                 </div>
               </div>
-            </div>
-
-            {/* Investment Duration */}
-            <div className="space-y-3">
-              <Label className="text-base block mb-2">How long do you prefer to keep your money invested?</Label>
-              <Select
-                defaultValue={data.investmentDuration}
-                onValueChange={(val) => setValue("investmentDuration", val)}
-              >
-                <SelectTrigger className="border-zinc-300 dark:border-zinc-700 focus:ring-teal-500 dark:focus:ring-teal-400">
-                  <SelectValue placeholder="Select duration" />
-                </SelectTrigger>
-                <SelectContent position="popper" className="z-[100]">
-                  {["< 1 year", "1-3 years", "3-5 years", "5+ years"].map((opt) => (
-                    <SelectItem key={opt} value={opt}>
-                      <FinancialTermTooltip term={opt}>{opt}</FinancialTermTooltip>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.investmentDuration && (
-                <p className="text-red-500 text-sm mt-1">{errors.investmentDuration.message}</p>
-              )}
             </div>
 
             {/* Monitoring Frequency */}

@@ -1,14 +1,26 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { TooltipProvider } from "@/components/ui/tooltip"
-import { motion, AnimatePresence } from "framer-motion"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { motion, AnimatePresence } from "framer-motion";
 
-import { UserProfileForm, type UserProfileData } from "@/components/UserProfileForm"
-import { InvestmentExperienceForm, type InvestmentExperienceData } from "@/components/InvestmentExperienceForm"
-import { RiskMonitoringForm, type RiskMonitoringData } from "@/components/RiskMonitoringForm"
-import { ImprovedGoalsReasonsForm, type ImprovedGoalsData } from "@/components/GoalsReasonsForm"
+import {
+  UserProfileForm,
+  type UserProfileData,
+} from "@/components/UserProfileForm";
+import {
+  InvestmentExperienceForm,
+  type InvestmentExperienceData,
+} from "@/components/InvestmentExperienceForm";
+import {
+  RiskMonitoringForm,
+  type RiskMonitoringData,
+} from "@/components/RiskMonitoringForm";
+import {
+  ImprovedGoalsReasonsForm,
+  type ImprovedGoalsData,
+} from "@/components/GoalsReasonsForm";
 
 // Combined form data type
 interface FinancialFormData
@@ -17,54 +29,68 @@ interface FinancialFormData
     Partial<RiskMonitoringData>,
     Partial<ImprovedGoalsData> {
   // Additional fields can be added here if needed
-  [key: string]: any
+  [key: string]: any;
 }
 
-const steps = ["Basic Info", "Investment Experience", "Risk Monitoring", "Financial Goals", "Review & Submit"]
+const steps = [
+  "Basic Info",
+  "Investment Experience",
+  "Risk Monitoring",
+  "Financial Goals",
+  "Review & Submit",
+];
 
 export default function FinancialFormWizard() {
-  const [step, setStep] = useState(0)
+  const [step, setStep] = useState(0);
   const [formData, setFormData] = useState<FinancialFormData>(() => {
-    const stored = localStorage.getItem("financialFormData")
-    return stored ? JSON.parse(stored) : {}
-  })
-
-  const next = () => setStep((s) => Math.min(s + 1, steps.length - 1))
-  const back = () => setStep((s) => Math.max(s - 1, 0))
-
+    const stored = localStorage.getItem("financialFormData");
+    return stored ? JSON.parse(stored) : {};
+  });
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+  const next = () => setStep((s) => Math.min(s + 1, steps.length - 1));
+  const back = () => setStep((s) => Math.max(s - 1, 0));
+  
   const updateFormData = (sectionData: Partial<FinancialFormData>) => {
-    const updated = { ...formData, ...sectionData }
-    setFormData(updated)
-    localStorage.setItem("financialFormData", JSON.stringify(updated))
-    next() // Automatically go to next step after updating data
-  }
+    const updated = { ...formData, ...sectionData };
+    setFormData(updated);
+    localStorage.setItem("financialFormData", JSON.stringify(updated));
+    next(); // Automatically go to next step after updating data
+  };
 
+  // In FinancialFormWizard.tsx
   const handleSubmit = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user/complete-wizard`, {
+      const response = await fetch(`${API_BASE_URL}/api/user/complete-wizard`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
         body: JSON.stringify(formData),
-      })
+      });
 
       if (response.ok) {
-        alert("Form submitted successfully!")
-        localStorage.removeItem("financialFormData")
-        window.location.href = "/" // Redirect to home page
+        // Clear locally stored form data
+        // localStorage.removeItem("financialFormData");
+
+        // Redirect to dashboard
+        window.location.href = "/";
       } else {
-        console.error("Failed to submit form")
+        console.error("Failed to submit form");
       }
     } catch (error) {
-      console.error("Error submitting form:", error)
+      console.error("Error submitting form:", error);
     }
-  }
+  };
 
   const renderComplexValue = (value: any) => {
     // Handle financial goals array specially
-    if (Array.isArray(value) && value[0] && typeof value[0] === "object" && "goal" in value[0]) {
+    if (
+      Array.isArray(value) &&
+      value[0] &&
+      typeof value[0] === "object" &&
+      "goal" in value[0]
+    ) {
       return (
         <div className="space-y-2">
           {value.map((goal, idx) => (
@@ -89,12 +115,12 @@ export default function FinancialFormWizard() {
             </div>
           ))}
         </div>
-      )
+      );
     }
 
     // Handle regular arrays
     if (Array.isArray(value)) {
-      return value.join(", ")
+      return value.join(", ");
     }
 
     // Handle nested objects
@@ -103,23 +129,30 @@ export default function FinancialFormWizard() {
         <div className="space-y-1 pl-3">
           {Object.entries(value).map(([subKey, subValue]) => (
             <div key={subKey} className="flex flex-wrap">
-              <span className="font-medium capitalize w-32">{subKey.replace(/([A-Z])/g, " $1")}:</span>
+              <span className="font-medium capitalize w-32">
+                {subKey.replace(/([A-Z])/g, " $1")}:
+              </span>
               <span>{String(subValue)}</span>
             </div>
           ))}
         </div>
-      )
+      );
     }
 
-    return String(value)
-  }
+    return String(value);
+  };
 
   const renderReview = () => (
     <div className="space-y-4">
       {Object.entries(formData).map(([key, value]) => {
         // Skip empty values
-        if (value === undefined || value === null || (Array.isArray(value) && value.length === 0) || value === "") {
-          return null
+        if (
+          value === undefined ||
+          value === null ||
+          (Array.isArray(value) && value.length === 0) ||
+          value === ""
+        ) {
+          return null;
         }
 
         // Group sections with headers
@@ -136,7 +169,7 @@ export default function FinancialFormWizard() {
               "salaried_employee",
             ].includes(key)
           )
-            return "Basic Information"
+            return "Basic Information";
           if (
             [
               "investInAvenues",
@@ -148,16 +181,14 @@ export default function FinancialFormWizard() {
               "investment_preference",
               "prefers_tax_saving",
               "risk_tolerance_self_reported",
-              "risk_capacity",
               "existing_investments",
             ].includes(key)
           )
-            return "Investment Experience"
+            return "Investment Experience";
           if (
             [
               "investmentDuration",
               "monitoringFrequency",
-              "expectedReturns",
               "investmentFactors",
               "investment_horizon_years",
               "expected_return",
@@ -167,13 +198,11 @@ export default function FinancialFormWizard() {
               "tax_bracket",
             ].includes(key)
           )
-            return "Risk & Monitoring"
+            return "Risk & Monitoring";
           if (
             [
               "financialGoals",
               "financialConcerns",
-              "monthlyIncome",
-              "monthlySavings",
               "existingDebts",
               "monthly_income",
               "annual_income",
@@ -187,10 +216,15 @@ export default function FinancialFormWizard() {
               "insurance_coverage",
             ].includes(key)
           )
-            return "Financial Goals & Situation"
-          if (["knowledgeLevel", "willingnessToLearn", "extraContext"].includes(key)) return "Financial Knowledge"
-          return "Other Information"
-        }
+            return "Financial Goals & Situation";
+          if (
+            ["knowledgeLevel", "willingnessToLearn", "extraContext"].includes(
+              key
+            )
+          )
+            return "Financial Knowledge";
+          return "Other Information";
+        };
 
         return (
           <div
@@ -207,10 +241,10 @@ export default function FinancialFormWizard() {
             </div>
             <div className="pl-1">{renderComplexValue(value)}</div>
           </div>
-        )
+        );
       })}
     </div>
-  )
+  );
 
   return (
     <TooltipProvider>
@@ -227,13 +261,15 @@ export default function FinancialFormWizard() {
                     i < step
                       ? "bg-teal-500 dark:bg-teal-400"
                       : i === step
-                        ? "bg-teal-300 dark:bg-teal-600"
-                        : "bg-gray-200 dark:bg-gray-700"
+                      ? "bg-teal-300 dark:bg-teal-600"
+                      : "bg-gray-200 dark:bg-gray-700"
                   }`}
                 />
                 <span
                   className={`text-xs mt-1 ${
-                    i === step ? "text-teal-600 dark:text-teal-400 font-medium" : "text-gray-500 dark:text-gray-400"
+                    i === step
+                      ? "text-teal-600 dark:text-teal-400 font-medium"
+                      : "text-gray-500 dark:text-gray-400"
                   }`}
                 >
                   {stepName}
@@ -251,10 +287,24 @@ export default function FinancialFormWizard() {
             exit={{ opacity: 0, x: -10 }}
             transition={{ duration: 0.3 }}
           >
-            {step === 0 && <UserProfileForm data={formData} update={updateFormData} />}
-            {step === 1 && <InvestmentExperienceForm data={formData} update={updateFormData} />}
-            {step === 2 && <RiskMonitoringForm data={formData} update={updateFormData} />}
-            {step === 3 && <ImprovedGoalsReasonsForm data={formData} update={updateFormData} />}
+            {step === 0 && (
+              <UserProfileForm data={formData} update={updateFormData} />
+            )}
+            {step === 1 && (
+              <InvestmentExperienceForm
+                data={formData}
+                update={updateFormData}
+              />
+            )}
+            {step === 2 && (
+              <RiskMonitoringForm data={formData} update={updateFormData} />
+            )}
+            {step === 3 && (
+              <ImprovedGoalsReasonsForm
+                data={formData}
+                update={updateFormData}
+              />
+            )}
             {step === 4 && (
               <div className="bg-white dark:bg-zinc-900 border border-teal-100 dark:border-teal-900/50 rounded-lg shadow-md p-6">
                 <h2 className="text-xl font-bold text-teal-700 dark:text-teal-300 mb-4">
@@ -295,5 +345,5 @@ export default function FinancialFormWizard() {
         )}
       </div>
     </TooltipProvider>
-  )
+  );
 }

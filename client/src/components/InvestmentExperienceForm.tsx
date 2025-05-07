@@ -30,7 +30,6 @@ const formSchema = z.object({
   investment_preference: z.string().min(1, "Please select your investment preference"),
   prefers_tax_saving: z.boolean().optional(),
   risk_tolerance_self_reported: z.number().min(1).max(10),
-  risk_capacity: z.number().min(1).max(10),
   existing_investments: z.number().min(0),
 })
 
@@ -64,7 +63,6 @@ export function InvestmentExperienceForm({ data, update }: InvestmentExperienceF
       investment_preference: data.investment_preference || "",
       prefers_tax_saving: data.prefers_tax_saving || false,
       risk_tolerance_self_reported: data.risk_tolerance_self_reported || 5,
-      risk_capacity: data.risk_capacity || 5,
       existing_investments: data.existing_investments || 0,
     },
   })
@@ -97,9 +95,6 @@ export function InvestmentExperienceForm({ data, update }: InvestmentExperienceF
     }
     if (data.risk_tolerance_self_reported !== undefined) {
       setValue("risk_tolerance_self_reported", data.risk_tolerance_self_reported)
-    }
-    if (data.risk_capacity !== undefined) {
-      setValue("risk_capacity", data.risk_capacity)
     }
     if (data.existing_investments !== undefined) {
       setValue("existing_investments", data.existing_investments)
@@ -190,33 +185,6 @@ export function InvestmentExperienceForm({ data, update }: InvestmentExperienceF
               </div>
               {errors.risk_tolerance_self_reported && (
                 <p className="text-red-500 text-sm mt-1">{errors.risk_tolerance_self_reported.message}</p>
-              )}
-            </div>
-
-            {/* Risk Capacity */}
-            <div className="space-y-3">
-              <Label htmlFor="risk_capacity" className="text-base block mb-2">
-                <FinancialTermTooltip term="risk_capacity">Risk Capacity (1-10)</FinancialTermTooltip>
-                <span className="text-sm text-zinc-500 dark:text-zinc-400 ml-2">
-                  (1: Very Low, 10: Very High)
-                </span>
-              </Label>
-              <div className="flex items-center gap-4">
-                <Input
-                  id="risk_capacity"
-                  type="range"
-                  min={1}
-                  max={10}
-                  step={1}
-                  {...register("risk_capacity", { valueAsNumber: true })}
-                  className="w-full"
-                />
-                <span className="font-medium text-lg min-w-[2ch] text-center">
-                  {watch("risk_capacity")}
-                </span>
-              </div>
-              {errors.risk_capacity && (
-                <p className="text-red-500 text-sm mt-1">{errors.risk_capacity.message}</p>
               )}
             </div>
 
