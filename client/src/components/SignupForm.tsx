@@ -21,7 +21,7 @@ export default function SignupForm() {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/preferences");
+      navigate("/form");
     }
   }, [isAuthenticated, navigate]);
 

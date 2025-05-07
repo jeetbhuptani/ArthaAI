@@ -1,8 +1,9 @@
-// src/components/BillsAnalyzer/FileUpload.tsx
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import { ExplanationCard } from '@/components/ExplanationCard';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Upload, FileText, Loader2 } from 'lucide-react';
 
 const FileUpload = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -62,35 +63,66 @@ const FileUpload = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-8 p-4 border rounded-lg shadow-sm bg-white">
-      <div
-        {...getRootProps()}
-        className="border-2 border-dashed border-gray-300 rounded-md p-6 text-center cursor-pointer hover:bg-gray-50"
-      >
-        <input {...getInputProps()} />
-        <p className="text-gray-600">Drag & drop a file here, or click to select a file</p>
-      </div>
-
-      {isProcessing && <p className="mt-4 text-sm text-blue-600">📄 Extracting text...</p>}
-      {file && !isProcessing && <p className="mt-2 text-sm text-green-700">✅ Uploaded: {file.name}</p>}
-
-      {extractedText && (
-        <div className="mt-6">
-          <h3 className="text-md font-semibold mb-1 text-gray-800">📝 Extracted Text:</h3>
-          <pre className="bg-gray-50 p-3 rounded border text-sm max-h-48 overflow-auto whitespace-pre-wrap text-gray-700">
-            {extractedText}
-          </pre>
+    <Card className="max-w-3xl mx-auto mt-8 border-teal-100 dark:border-teal-900/50 shadow-md">
+      <CardHeader className="bg-gradient-to-r from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 border-b border-teal-100 dark:border-teal-900/50">
+        <CardTitle className="text-xl text-teal-800 dark:text-teal-300 flex items-center gap-2">
+          <FileText className="h-5 w-5" />
+          Document Analyzer
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="pt-6">
+        <div
+          {...getRootProps()}
+          className="border-2 border-dashed border-teal-200 dark:border-teal-800 rounded-md p-6 text-center cursor-pointer hover:bg-teal-50 dark:hover:bg-teal-900/10 transition-colors"
+        >
+          <input {...getInputProps()} />
+          <Upload className="h-10 w-10 mx-auto mb-2 text-teal-500 dark:text-teal-400" />
+          <p className="text-teal-700 dark:text-teal-300 font-medium">Drag & drop a file here, or click to select a file</p>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+            Supported formats: PDF, JPG, PNG
+          </p>
         </div>
-      )}
 
-      {explanation && (
-        <ExplanationCard
-          explanation={explanation}
-          onRegenerate={() => fetchExplanation(extractedText)}
-          isLoading={isExplaining}
-        />
-      )}
-    </div>
+        {isProcessing && (
+          <div className="mt-4 flex items-center justify-center text-teal-600 dark:text-teal-400">
+            <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+            <p>Extracting text...</p>
+          </div>
+        )}
+        
+        {file && !isProcessing && (
+          <div className="mt-4 p-3 bg-teal-50 dark:bg-teal-900/20 rounded-md border border-teal-100 dark:border-teal-900/50">
+            <p className="text-sm flex items-center">
+              <FileText className="h-4 w-4 mr-2 text-teal-600 dark:text-teal-400" />
+              <span className="text-teal-700 dark:text-teal-300 font-medium">Uploaded:</span>
+              <span className="ml-2 text-zinc-600 dark:text-zinc-300">{file.name}</span>
+            </p>
+          </div>
+        )}
+
+        {extractedText && (
+          <div className="mt-6">
+            <h3 className="text-md font-semibold mb-2 text-teal-700 dark:text-teal-300 flex items-center">
+              <FileText className="h-4 w-4 mr-2" />
+              Extracted Text:
+            </h3>
+            <pre className="bg-zinc-50 dark:bg-zinc-900/50 p-4 rounded-md border border-zinc-200 dark:border-zinc-800 text-sm max-h-48 overflow-auto whitespace-pre-wrap text-zinc-700 dark:text-zinc-300">
+              {extractedText}
+            </pre>
+          </div>
+        )}
+
+        {explanation && (
+          <div className="mt-6">
+            <ExplanationCard
+              explanation={explanation}
+              onRegenerate={() => fetchExplanation(extractedText)}
+              isLoading={isExplaining}
+            />
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 

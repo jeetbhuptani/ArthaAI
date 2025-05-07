@@ -57,18 +57,17 @@ const investmentTypeNames = {
 
 // Chart colors
 const chartColors = {
-  [investmentTypes.STOCKS_NIFTY50]: "#3b82f6",
-  [investmentTypes.STOCKS_SENSEX]: "#1d4ed8",
-  [investmentTypes.MUTUAL_FUNDS_EQUITY]: "#f59e0b",
-  [investmentTypes.MUTUAL_FUNDS_DEBT]: "#10b981",
-  [investmentTypes.MUTUAL_FUNDS_HYBRID]: "#8b5cf6",
-  [investmentTypes.REAL_ESTATE]: "#ec4899",
-  [investmentTypes.FIXED_DEPOSIT]: "#14b8a6",
-  [investmentTypes.GOLD]: "#f97316",
-  [investmentTypes.PPF]: "#a855f7",
-  [investmentTypes.NPS]: "#64748b",
+  [investmentTypes.STOCKS_NIFTY50]: "#14b8a6", // teal-500
+  [investmentTypes.STOCKS_SENSEX]: "#0d9488", // teal-600
+  [investmentTypes.MUTUAL_FUNDS_EQUITY]: "#0f766e", // teal-700
+  [investmentTypes.MUTUAL_FUNDS_DEBT]: "#10b981", // emerald-500
+  [investmentTypes.MUTUAL_FUNDS_HYBRID]: "#059669", // emerald-600
+  [investmentTypes.REAL_ESTATE]: "#047857", // emerald-700
+  [investmentTypes.FIXED_DEPOSIT]: "#0d9488", // teal-600
+  [investmentTypes.GOLD]: "#115e59", // teal-800
+  [investmentTypes.PPF]: "#065f46", // emerald-800
+  [investmentTypes.NPS]: "#134e4a", // teal-900
 };
-
 // Calculate compound interest
 const calculateCompoundInterest = (
   principal: number,
@@ -308,6 +307,37 @@ export default function InvestmentComparator() {
     prepareChartData(results);
   };
 
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-md p-2 rounded">
+          <p className="text-gray-900 dark:text-gray-100 font-medium">{`Year ${label}`}</p>
+          <div className="space-y-1 mt-1">
+            {payload.map((entry: any, index: number) => (
+              <div 
+                key={`tooltip-${index}`} 
+                className="flex items-center justify-between gap-3"
+              >
+                <div className="flex items-center gap-1">
+                  <div 
+                    className="w-3 h-3 rounded-full" 
+                    style={{ backgroundColor: entry.color }}
+                  ></div>
+                  <span className="text-xs text-gray-800 dark:text-gray-200">
+                    {entry.name}:
+                  </span>
+                </div>
+                <span className="text-xs font-medium text-gray-900 dark:text-gray-100">
+                  {formatCurrency(entry.value)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+    return null;
+  };
   // Generate AI summary using Gemini API
   const generateAiSummary = async () => {
     if (!bestInvestment || compareData.length === 0) return;
@@ -413,7 +443,7 @@ export default function InvestmentComparator() {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
         <div className="text-center">
-          <Loader2 className="h-8 w-8 mx-auto animate-spin text-blue-600" />
+          <Loader2 className="h-8 w-8 mx-auto animate-spin text-teal-600 dark:text-teal-400" />
           <p className="mt-2 text-gray-600">Loading investment data...</p>
         </div>
       </div>
@@ -432,7 +462,7 @@ export default function InvestmentComparator() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Input Form */}
-        <div className="lg:col-span-1 bg-white dark:bg-gray-800 rounded-lg shadow p-6 border border-gray-200 dark:border-gray-700">
+        <div className="lg:col-span-1 bg-white dark:bg-black rounded-lg shadow-md p-6 border border-teal-100 dark:border-teal-900/50">
           <div className="mb-4">
             <h2 className="text-xl font-bold mb-1">Investment Parameters</h2>
             <p className="text-sm text-gray-500">
@@ -452,7 +482,7 @@ export default function InvestmentComparator() {
               <input
                 type="number"
                 id="initialInvestment"
-                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                className="px-3 py-2 border border-zinc-300 dark:border-zinc-700 focus:ring-teal-500 dark:focus:ring-teal-400 rounded-md w-full bg-white dark:bg-black text-gray-900 dark:text-gray-100"
                 value={initialInvestment}
                 onChange={handleInvestmentChange}
               />
@@ -472,7 +502,7 @@ export default function InvestmentComparator() {
               <input
                 type="range"
                 id="duration"
-                className="w-full"
+                className="w-full accent-teal-600"
                 min="1"
                 max="50"
                 step="1"
@@ -495,7 +525,7 @@ export default function InvestmentComparator() {
               <input
                 type="range"
                 id="riskTolerance"
-                className="w-full"
+                className="w-full accent-teal-600"
                 min="1"
                 max="10"
                 step="1"
@@ -519,8 +549,8 @@ export default function InvestmentComparator() {
                     type="button"
                     className={`px-3 py-2 text-sm rounded-md ${
                       selectedInvestments.includes(type)
-                        ? "bg-blue-600 text-white"
-                        : "bg-gray-100 text-gray-700 border border-gray-300"
+                        ? "bg-teal-600 hover:bg-teal-700 text-white dark:bg-teal-700 dark:hover:bg-teal-600"
+                        : "bg-black text-gray-700 border border-teal-200 text-teal-700 hover:bg-teal-50 hover:text-teal-800 dark:border-teal-800 dark:text-teal-300 dark:hover:bg-teal-900/20"
                     }`}
                     onClick={() => toggleInvestmentSelection(type)}
                   >
@@ -536,7 +566,7 @@ export default function InvestmentComparator() {
         <div className="lg:col-span-2 space-y-6">
           {/* Best Investment Card */}
           {bestInvestment && (
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/40 dark:to-indigo-900/40 border border-indigo-200 dark:border-indigo-800 rounded-lg shadow p-6">
+            <div className="bg-gradient-to-r from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 border border-teal-100 dark:border-teal-900/50 rounded-lg shadow-md p-6">
               {" "}
               <div className="mb-4">
                 <div className="flex items-center mb-1">
@@ -556,7 +586,7 @@ export default function InvestmentComparator() {
                     <div className="flex items-center text-sm">
                       <span className="text-gray-600 mr-2">Risk Level:</span>
                       <div className="flex items-center">
-                        <div className="w-16 h-2 bg-gray-200 rounded-full mr-2">
+                        <div className="w-16 h-2 bg-black rounded-full mr-2">
                           <div
                             className={`h-2 rounded-full ${
                               bestInvestment.risk >= 8
@@ -574,7 +604,7 @@ export default function InvestmentComparator() {
                     <div className="flex items-center text-sm">
                       <span className="text-gray-600 mr-2">Liquidity:</span>
                       <div className="flex items-center">
-                        <div className="w-16 h-2 bg-gray-200 rounded-full mr-2">
+                        <div className="w-16 h-2 bg-black rounded-full mr-2">
                           <div
                             className={`h-2 rounded-full ${
                               bestInvestment.liquidity >= 8
@@ -620,7 +650,7 @@ export default function InvestmentComparator() {
 
                 {summaryLoading ? (
                   <div className="flex items-center text-gray-500">
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin text-teal-600 dark:text-teal-400" />
                     Generating investment insights...
                   </div>
                 ) : (
@@ -631,9 +661,12 @@ export default function InvestmentComparator() {
           )}
 
           {/* Chart */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700">
-            <div className="p-4 border-b border-gray-200">
-              <h2 className="text-xl font-bold">Growth Comparison</h2>
+          <div className="bg-white dark:bg-black rounded-lg shadow-md border border-teal-100 dark:border-teal-900/50">
+            <div className="p-4 border-b border-teal-100 dark:border-teal-900/50">
+              <h2 className="text-xl font-bold text-teal-800 dark:text-teal-300">
+                Growth Comparison
+              </h2>
+
               <p className="text-sm text-gray-500">
                 Projected growth over {duration} years
               </p>
@@ -664,13 +697,7 @@ export default function InvestmentComparator() {
                         position: "insideLeft",
                       }}
                     />
-                    <Tooltip
-                      formatter={(value) => [
-                        formatCurrency(value as number),
-                        "Value",
-                      ]}
-                      labelFormatter={(label) => `Year ${label}`}
-                    />
+                    <Tooltip content={CustomTooltip} />
                     <Legend />
                     {selectedInvestments.map((type) => (
                       <Line
@@ -689,16 +716,18 @@ export default function InvestmentComparator() {
           </div>
 
           {/* Comparison Table */}
-          <div className="bg-white rounded-lg shadow border border-gray-200">
-            <div className="p-4 border-b border-gray-200">
-              <h2 className="text-xl font-bold">Investment Comparison</h2>
+          <div className="bg-white dark:bg-black rounded-lg shadow-md border border-teal-100 dark:border-teal-900/50">
+            <div className="p-4 border-b border-teal-100 dark:border-teal-900/50">
+              <h2 className="text-xl font-bold text-teal-800 dark:text-teal-300">
+                Investment Comparison
+              </h2>
               <p className="text-sm text-gray-500">
                 Side-by-side comparison of all selected investments
               </p>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 dark:bg-gray-700">
+                <thead className="bg-teal-50 dark:bg-teal-900/20">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Investment Type
@@ -720,9 +749,12 @@ export default function InvestmentComparator() {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                <tbody className="bg-white dark:bg-black divide-y divide-gray-200 dark:divide-gray-700">
                   {compareData.map((item) => (
-                    <tr key={item.type} className="hover:bg-gray-50">
+                    <tr
+                      key={item.type}
+                      className="hover:bg-teal-50 dark:hover:bg-teal-900/10"
+                    >
                       <td className="px-4 py-4 whitespace-nowrap">
                         <span className="font-medium">
                           {investmentTypeNames[item.type]}
@@ -733,7 +765,7 @@ export default function InvestmentComparator() {
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="w-16 h-2 bg-gray-200 rounded-full mr-2">
+                          <div className="w-16 h-2 bg-black rounded-full mr-2">
                             <div
                               className={`h-2 rounded-full ${
                                 item.risk >= 8
@@ -750,7 +782,7 @@ export default function InvestmentComparator() {
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="w-16 h-2 bg-gray-200 rounded-full mr-2">
+                          <div className="w-16 h-2 bg-black rounded-full mr-2">
                             <div
                               className={`h-2 rounded-full ${
                                 item.liquidity >= 8
@@ -784,7 +816,7 @@ export default function InvestmentComparator() {
             </div>
 
             {/* Tax Implications Section */}
-            <div className="p-4 border-t border-gray-200">
+            <div className="p-4 border-t border-teal-100 dark:border-teal-900/50">
               <h3 className="font-medium mb-2 flex items-center">
                 <AlertCircle className="h-4 w-4 mr-1 text-amber-500" />
                 Tax Implications
@@ -793,7 +825,7 @@ export default function InvestmentComparator() {
                 {compareData.map((item) => (
                   <div
                     key={`tax-${item.type}`}
-                    className="bg-gray-50 dark:bg-gray-700 p-2 rounded"
+                    className="bg-teal-50 dark:bg-teal-900/20 p-2 rounded"
                   >
                     <span className="font-medium">
                       {investmentTypeNames[item.type]}
@@ -805,8 +837,7 @@ export default function InvestmentComparator() {
             </div>
 
             {/* Disclaimer */}
-            <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-xs text-gray-500 dark:text-gray-400">
-              {" "}
+            <div className="p-4 border-t border-teal-100 dark:border-teal-900/50 bg-teal-50 dark:bg-teal-900/20 text-xs text-gray-500 dark:text-gray-400">
               <p>
                 Disclaimer: The projections shown are based on historical data
                 and estimated returns. Actual investment performance may vary.
@@ -820,11 +851,11 @@ export default function InvestmentComparator() {
       </div>
 
       {/* Additional Educational Section */}
-      <div className="mt-8 bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-6">
-        {" "}
-        <h2 className="text-xl font-bold mb-4">
+      <div className="mt-8 bg-white dark:bg-black rounded-lg shadow-md border border-teal-100 dark:border-teal-900/50 p-6">
+        <h2 className="text-xl font-bold mb-4 text-teal-800 dark:text-teal-300">
           Understanding Your Investment Options
         </h2>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <h3 className="text-lg font-medium mb-2">Risk vs. Return</h3>
@@ -874,7 +905,7 @@ export default function InvestmentComparator() {
             </ul>
           </div>
         </div>
-        <div className="mt-4 pt-4 border-t border-gray-200">
+        <div className="mt-4 pt-4 border-t border-teal-100 dark:border-teal-900/50">
           <h3 className="text-lg font-medium mb-2">Tax Efficiency</h3>
           <p className="text-sm text-gray-600 mb-2">
             Different investment types have different tax treatments in India.
