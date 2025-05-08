@@ -2,16 +2,13 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import SignupForm from "@/components/SignupForm";
 import LoginForm from "@/components/LoginForm";
-import { GoogleLogin } from "@react-oauth/google";
 import { useAuth } from "@/context/AuthContext";
 
 export default function Authentication() {
   const [searchParams] = useSearchParams();
   const modeParam = searchParams.get("mode");
   const [authMode, setAuthMode] = useState<"signup" | "login">("signup");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);    
-  const { login, isAuthenticated } = useAuth();
+  useAuth(); // Call useAuth() without destructuring unused elements
   
 
   useEffect(() => {
@@ -24,20 +21,6 @@ export default function Authentication() {
     setAuthMode((prevMode) => (prevMode === "signup" ? "login" : "signup"));
   };
 
-  const handleGoogleLoginSuccess = async (credentialResponse: any) => {
-    try {
-      setLoading(true);
-      const token = credentialResponse.credential;
-      if (token) {
-        await login(token);
-        // The navigation will happen automatically due to the useEffect above
-      }
-    } catch (error) {
-      console.error("Error processing Google login:", error);
-      setError("Failed to process Google login");
-      setLoading(false);
-    }
-  };
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center py-8 px-4 bg-stone-200 dark:bg-black/50">
       {/* Bright Backlight Effect */}
@@ -115,23 +98,7 @@ export default function Authentication() {
               </div>
             </>
           )}
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white dark:bg-gray-900 text-gray-500">
-                Or continue with
-              </span>
-            </div>
-          </div>
-
-          <div className="w-full flex items-center justify-center p-4">
-            <GoogleLogin
-              onSuccess={handleGoogleLoginSuccess}
-              onError={() => setError("Google login failed")}
-            />
-          </div>
+          
         </div>
       </div>
     </div>

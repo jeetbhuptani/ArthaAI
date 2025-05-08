@@ -33,9 +33,6 @@ const UserSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.Mixed,
     default: {},
   },
-  googleId: {
-    type: String
-  },
   createdAt: {
     type: Date,
     default: Date.now
