@@ -26,7 +26,8 @@ if (!process.env.MONGO_URI) {
 
 const allowedOrigins = [
   'http://localhost:5173', // vite dev
-  'https://storage.googleapis.com', // production bucket
+  'https://storage.googleapis.com',
+  'https://arthaai-9nqs.onrender.com'// production bucket
 ];
 
 app.use(cors({
