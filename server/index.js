@@ -12,22 +12,35 @@ import learningRoute from './routes/learning.js';
 import taxRoute from './routes/tax.js';
 import compareRoute from './routes/comparator.js';
 import newsRoute from './routes/news.js';
+import path from 'path';
 // Load environment variables
 config();
-
+const app = express();
+const PORT = process.env.PORT || 5000
+const __dirname = path.resolve();
 // Verify environment variables are loaded
 if (!process.env.MONGO_URI) {
   console.error('MONGO_URI is not defined in environment variables');
   process.exit(1);
 }
 
-const app = express();
+const allowedOrigins = [
+  'http://localhost:5173', // vite dev
+  'https://storage.googleapis.com', // production bucket
+];
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'https://storage.googleapis.com/arthaai', // Your frontend URL
-  credentials: true, // Allow credentials (cookies, authorization headers)
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
 
 app.use(json());
 
@@ -56,5 +69,12 @@ app.use('/api/tax', taxRoute)
 app.use('/api/compare', compareRoute);
 app.use('/api/news', newsRoute);
 
-const PORT = process.env.PORT || 8080;
+if(process.env.NODE_ENV == 'production') {
+  app.use(express.static(path.join(__dirname, "/client/dist")));
+
+  app.get("*", (req,res) => {
+      res.sendFile(path.resolve(__dirname, "client", "dist", "index.html"));
+  })
+}
+
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -30,7 +30,7 @@ export default function TaxFillingWizard() {
   const [loading, setLoading] = useState(false);
   const [fetchingSuggestions, setFetchingSuggestions] = useState(false);
   const API_BASE_URL =
-    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+    import.meta.env.VITE_API_URL || "";
 
   // Fetch AI suggestions when summary is available
   useEffect(() => {

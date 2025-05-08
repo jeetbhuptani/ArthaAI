@@ -47,7 +47,7 @@ export default function FinancialFormWizard() {
     return stored ? JSON.parse(stored) : {};
   });
   const API_BASE_URL =
-    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+    import.meta.env.VITE_API_URL || "";
   const next = () => setStep((s) => Math.min(s + 1, steps.length - 1));
   const back = () => setStep((s) => Math.max(s - 1, 0));
 

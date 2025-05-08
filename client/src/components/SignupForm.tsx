@@ -8,7 +8,7 @@ import { useAuth } from "@/context/AuthContext";
 export default function SignupForm() {
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+  const API_BASE_URL = import.meta.env.VITE_API_URL || "";
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
