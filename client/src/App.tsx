@@ -7,26 +7,28 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { AuthProvider } from "./context/AuthContext";
 import { LoadingProvider } from "./context/LoadingProvider";
 import GTTranslator from "./components/GTTranslator";
+import { Toaster } from "@/components/ui/sonner";
 
 function App() {
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
   return (
     <BrowserRouter>
-    <LoadingProvider>
-      <AuthProvider>
-      <div className="w-full mx-auto p-4 min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1">
-          <GoogleOAuthProvider clientId={googleClientId}>
-            <SmoothScroll />
-            <AppRoutes />
-          </GoogleOAuthProvider>
-        </main>
-        <Footer />
-        <GTTranslator />
-      </div>
-      </AuthProvider>
-    </LoadingProvider>
+      <LoadingProvider>
+          <AuthProvider>
+            <div className="w-full mx-auto p-4 min-h-screen flex flex-col">
+              <Header />
+              <main className="flex-1">
+                <GoogleOAuthProvider clientId={googleClientId}>
+                  <AppRoutes />
+                  <SmoothScroll />
+                </GoogleOAuthProvider>
+              </main>
+              <Footer />
+              <GTTranslator />
+              <Toaster position="top-right" richColors/>
+            </div>
+          </AuthProvider>
+      </LoadingProvider>
     </BrowserRouter>
   );
 }

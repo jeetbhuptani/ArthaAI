@@ -5,6 +5,7 @@ import {
   getMe, 
   verifyToken,
   updateProfile,
+  deleteAccount,
 } from '../controllers/authController.js';
 import { protect } from '../middleware/auth.js';
 
@@ -15,5 +16,5 @@ router.post('/login', login);
 router.get('/me', protect, getMe);
 router.get('/verify', protect, verifyToken);
 router.put('/profile', protect, updateProfile);
-
+router.delete('/account', protect, deleteAccount);
 export default router;

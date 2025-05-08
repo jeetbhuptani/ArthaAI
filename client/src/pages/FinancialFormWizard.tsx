@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { motion, AnimatePresence } from "framer-motion";
@@ -46,9 +46,14 @@ export default function FinancialFormWizard() {
     const stored = localStorage.getItem("financialFormData");
     return stored ? JSON.parse(stored) : {};
   });
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+  const API_BASE_URL =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
   const next = () => setStep((s) => Math.min(s + 1, steps.length - 1));
   const back = () => setStep((s) => Math.max(s - 1, 0));
+
+  useEffect(() => {
+    getFinancialFormData();
+  }, []);
   
   const updateFormData = (sectionData: Partial<FinancialFormData>) => {
     const updated = { ...formData, ...sectionData };
@@ -57,6 +62,28 @@ export default function FinancialFormWizard() {
     next(); // Automatically go to next step after updating data
   };
 
+  //Get FinancialFormData from Backend API
+  const getFinancialFormData = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/user/get-wizard-data`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+      });
+      
+      if (response.ok) {
+        const jsonResponse = await response.json();
+        const data = jsonResponse.wizardData;
+        if (data) {
+          setFormData(data);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching wizard data:", error);
+    }
+  };
   // In FinancialFormWizard.tsx
   const handleSubmit = async () => {
     try {
