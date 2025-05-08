@@ -142,7 +142,7 @@ export default function TaxFillingWizard() {
     <div className="container mx-auto py-8 px-4">
       <Card className="max-w-2xl mx-auto border-teal-100 dark:border-teal-900/50 shadow-md">
         <CardHeader className="bg-gradient-to-r from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 border-b border-teal-100 dark:border-teal-900/50">
-          <CardTitle className="text-2xl text-teal-800 dark:text-teal-300">
+          <CardTitle className="text-2xl text-teal-800 dark:text-teal-300 mt-6">
             Tax Filing Wizard
           </CardTitle>
           <CardDescription className="text-zinc-600 dark:text-zinc-400">
@@ -150,9 +150,9 @@ export default function TaxFillingWizard() {
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="pt-6">
+        <CardContent className="pt-1">
           {/* Progress Steps */}
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between">
             {steps.map((s, i) => (
               <div key={i} className="flex flex-col items-center">
                 <div
@@ -175,7 +175,7 @@ export default function TaxFillingWizard() {
                 >
                   {s.title}
                 </span>
-                {i < steps.length - 1 && (
+                {/* {i < steps.length - 1 && (
                   <div
                     className={`hidden md:block h-[2px] w-16 ${
                       i < step
@@ -185,7 +185,7 @@ export default function TaxFillingWizard() {
                       (i + 0.5) * (100 / steps.length)
                     }% - 8px)]`}
                   />
-                )}
+                )} */}
               </div>
             ))}
           </div>

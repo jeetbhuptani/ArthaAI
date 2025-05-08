@@ -42,7 +42,7 @@ export default function AboutPage() {
   const techStack = [
     {
       title: "Frontend",
-      description: "React hosted on AWS S3",
+      description: "React hosted as Static Site on GCP for quick access",
       icon: <Code className="h-10 w-10 text-orange-500" />,
     },
     {
@@ -52,19 +52,19 @@ export default function AboutPage() {
     },
     {
       title: "LLM API",
-      description: "Gemini API / AWS Bedrock",
+      description: "Gemini API with tailored prompts for finance",
       icon: <Brain className="h-10 w-10 text-purple-500" />,
     },
     {
       title: "Cloud Infra",
-      description: "AWS S3, API Gateway, Lambda, DynamoDB",
+      description: "GCP, MongoDB Atlas and Cloudinary",
       icon: <Cloud className="h-10 w-10 text-blue-500" />,
     },
-    // {
-    //   title: "Voice",
-    //   description: "OpenAI Whisper / Amazon Transcribe & Polly",
-    //   icon: <Headphones className="h-10 w-10 text-pink-500" />,
-    // },
+    {
+      title: "Voice & Optics",
+      description: "Speech-to-text & OCR Analyzer features",
+      icon: <Headphones className="h-10 w-10 text-pink-500" />,
+    },
   ];
 
   const features = [
@@ -81,12 +81,12 @@ export default function AboutPage() {
     },
     {
       title: "Data Storage",
-      description: "Stores chat history per session/user in DynamoDB",
+      description: "Stores chat history per session/user in MongoDB Atlas",
       icon: <Database className="h-6 w-6 text-blue-500" />,
     },
     {
       title: "Multilingual",
-      description: "Support for Hindi, Bengali, and other Indian languages",
+      description: "Support for Hindi, Gujarati, and other languages",
       icon: <Languages className="h-6 w-6 text-orange-500" />,
     },
     {
@@ -96,15 +96,15 @@ export default function AboutPage() {
     },
     {
       title: "Cloud Native",
-      description: "Built using AWS services for scalability and reliability",
+      description: "Hosted on GCP for scalability and reliability",
       icon: <CloudCog className="h-6 w-6 text-blue-500" />,
     },
   ];
 
   const useCases = [
-    "How much should I save monthly if I earn ₹30,000?",
+    "How much should I save monthly as per my Salary?",
     "What is SIP?",
-    "What's better — fixed deposit or gold?",
+    "What's better for me — fixed deposit or gold?",
     "How can I reduce my EMI burden?",
   ];
 
@@ -508,18 +508,18 @@ export default function AboutPage() {
                     uniqueness: "Uses LLMs to explain finance without jargon",
                   },
                   {
-                    feature: "Vernacular Support",
-                    uniqueness: "Multilingual responses (Hindi, Bengali, etc.)",
+                    feature: "Support Tools",
+                    uniqueness: "Bill Analysis & Tax Filling Analysis",
                   },
                   {
-                    feature: "Voice-Enabled (Optional)",
+                    feature: "Latest Trends Explained",
                     uniqueness:
-                      "Uses Whisper or AWS voice tools for accessibility",
+                      "Generates insights on current financial news and trends",
                   },
                   {
-                    feature: "Cloud Native Stack",
+                    feature: "Portfolio Analysis",
                     uniqueness:
-                      "Built using AWS S3, Lambda, DynamoDB – low cost, scalable",
+                      "Checks for portfolio diversification and risk management",
                   },
                   {
                     feature: "Solo-Built and Fully Open Source",
@@ -583,7 +583,7 @@ export default function AboutPage() {
                 size="lg"
                 className="bg-white text-teal-900 hover:bg-teal-100"
               >
-                <a href="#">Try ArthaAI Today</a>
+                <a href="/learning">Try ArthaAI Today</a>
               </Button>
             </div>
           </motion.div>
@@ -622,7 +622,7 @@ export default function AboutPage() {
             {[
               {
                 title: "Deployed Demo",
-                description: "Live demo hosted on AWS S3 + CloudFront",
+                description: "Live demo hosted on GCP",
                 icon: (
                   <Globe className="h-10 w-10 text-zinc-700 dark:text-zinc-300" />
                 ),
@@ -699,11 +699,11 @@ export default function AboutPage() {
                 size="lg"
                 className="bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white"
               >
-                <a href="#">Try ArthaAI</a>
+                <a href="/learning">Try ArthaAI</a>
               </Button>
               <Button variant="outline" size="lg" className="gap-2">
                 <a
-                  href="https://github.com"
+                  href="https://github.com/jeetbhuptani/ArthaAI"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2"

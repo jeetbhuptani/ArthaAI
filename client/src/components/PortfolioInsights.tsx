@@ -51,7 +51,7 @@ export default function PortfolioInsights({ analysisData }: { analysisData: Anal
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
       <Card className="border-teal-100 dark:border-teal-900/50 shadow-md">
         <CardHeader className="bg-gradient-to-r from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 border-b border-teal-100 dark:border-teal-900/50">
-          <CardTitle className="text-xl text-teal-800 dark:text-teal-300 flex items-center gap-2">
+          <CardTitle className="text-xl text-teal-800 dark:text-teal-300 flex items-center gap-2 mt-6">
             <Shield className="h-5 w-5" />
             Risk Level
           </CardTitle>
@@ -94,7 +94,7 @@ export default function PortfolioInsights({ analysisData }: { analysisData: Anal
 
       <Card className="border-teal-100 dark:border-teal-900/50 shadow-md">
         <CardHeader className="bg-gradient-to-r from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 border-b border-teal-100 dark:border-teal-900/50">
-          <CardTitle className="text-xl text-teal-800 dark:text-teal-300 flex items-center gap-2">
+          <CardTitle className="text-xl text-teal-800 dark:text-teal-300 flex items-center gap-2 mt-6">
             <BarChart3 className="h-5 w-5" />
             Investment Distribution
           </CardTitle>
@@ -126,7 +126,7 @@ export default function PortfolioInsights({ analysisData }: { analysisData: Anal
 
       <Card className="col-span-full border-teal-100 dark:border-teal-900/50 shadow-md">
         <CardHeader className="bg-gradient-to-r from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 border-b border-teal-100 dark:border-teal-900/50">
-          <CardTitle className="text-xl text-teal-800 dark:text-teal-300 flex items-center gap-2">
+          <CardTitle className="text-xl text-teal-800 dark:text-teal-300 flex items-center gap-2 mt-6">
             <TrendingUp className="h-5 w-5" />
             Insights
           </CardTitle>
@@ -147,7 +147,7 @@ export default function PortfolioInsights({ analysisData }: { analysisData: Anal
 
       <Card className="col-span-full border-teal-100 dark:border-teal-900/50 shadow-md">
         <CardHeader className="bg-gradient-to-r from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 border-b border-teal-100 dark:border-teal-900/50">
-          <CardTitle className="text-xl text-teal-800 dark:text-teal-300 flex items-center gap-2">
+          <CardTitle className="text-xl text-teal-800 dark:text-teal-300 flex items-center gap-2 mt-6">
             <AlertTriangle className="h-5 w-5" />
             Next Steps
           </CardTitle>
