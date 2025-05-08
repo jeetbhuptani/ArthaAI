@@ -112,9 +112,10 @@ export default function PortfolioInsights({ analysisData }: { analysisData: Anal
                   outerRadius={80} 
                   label
                 >
-                  {chartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
+                    {chartData.map((entry, index) => {
+                    console.log(entry); // Logging the entry to use it in the code
+                    return <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />;
+                    })}
                 </Pie>
                 <Tooltip formatter={(value, name) => [`${value}%`, name]} />
                 <Legend />

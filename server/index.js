@@ -23,7 +23,7 @@ if (!process.env.MONGO_URI) {
 
 const app = express();
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173', // Your frontend URL
+  origin: process.env.CLIENT_URL || 'https://storage.googleapis.com/arthaai', // Your frontend URL
   credentials: true, // Allow credentials (cookies, authorization headers)
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -56,5 +56,5 @@ app.use('/api/tax', taxRoute)
 app.use('/api/compare', compareRoute);
 app.use('/api/news', newsRoute);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
