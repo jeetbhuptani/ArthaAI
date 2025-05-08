@@ -1,6 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { RefreshCw, FileText } from 'lucide-react';
+import { RefreshCw, FileText } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface Props {
   explanation: string;
@@ -25,12 +27,14 @@ export const ExplanationCard: React.FC<Props> = ({
         <div className="space-y-4">
           <div className="p-4 rounded-md bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800">
             <p className="whitespace-pre-wrap text-zinc-700 dark:text-zinc-300 text-sm leading-relaxed">
-              {explanation}
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {explanation}
+              </ReactMarkdown>
             </p>
           </div>
 
-          <Button 
-            onClick={onRegenerate} 
+          <Button
+            onClick={onRegenerate}
             disabled={isLoading}
             className="bg-teal-600 hover:bg-teal-700 dark:bg-teal-700 dark:hover:bg-teal-600"
           >
