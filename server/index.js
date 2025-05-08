@@ -12,7 +12,6 @@ import learningRoute from './routes/learning.js';
 import taxRoute from './routes/tax.js';
 import compareRoute from './routes/comparator.js';
 import newsRoute from './routes/news.js';
-import zerodhaRoute from './routes/zerodha.js';
 // Load environment variables
 config();
 
@@ -56,7 +55,6 @@ app.use('/api/explain', explainRoute);
 app.use('/api/tax', taxRoute)
 app.use('/api/compare', compareRoute);
 app.use('/api/news', newsRoute);
-app.use('/api/zerodha', zerodhaRoute);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -4,8 +4,6 @@ import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import PortfolioInsights from "@/components/PortfolioInsights"
 import { Loader2, PieChart } from "lucide-react"
-import ZerodhaPortfolio from "@/components/Zerodha/ZerodhaPortfolio"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 // Define the shape of the data returned from the backend
 interface AnalysisData {
@@ -23,7 +21,6 @@ export default function Dashboard() {
 
   useEffect(() => {
     const fetchAnalysis = async () => {
-      setLoading(true)
       try {
         const response = await fetch(`${API_BASE_URL}/api/analysis`, {
           method: "POST",
@@ -32,24 +29,22 @@ export default function Dashboard() {
             Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
           },
         })
-        
+
         if (!response.ok) {
-          throw new Error('Failed to fetch portfolio analysis')
+          throw new Error("Failed to fetch analysis data")
         }
 
-        const data = await response.json()
+        const data: AnalysisData = await response.json()
         setAnalysis(data)
-        setError(null)
       } catch (err: any) {
-        console.error('Error fetching portfolio analysis:', err)
-        setError(err.message || 'Failed to load portfolio analysis')
+        setError(err.message)
       } finally {
         setLoading(false)
       }
     }
 
     fetchAnalysis()
-  }, [API_BASE_URL])
+  }, [])
 
   if (loading)
     return (
@@ -85,32 +80,21 @@ export default function Dashboard() {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <Tabs defaultValue="portfolio" className="mb-6">
-        <TabsList className="grid w-full max-w-md grid-cols-2">
-          <TabsTrigger value="portfolio">ArthaAI Analysis</TabsTrigger>
-          <TabsTrigger value="zerodha">Zerodha Portfolio</TabsTrigger>
-        </TabsList>
-        <TabsContent value="portfolio" className="pt-4">
-          <Card className="border-teal-100 dark:border-teal-900/50 shadow-md mb-8">
-            <CardHeader className="bg-gradient-to-r from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 border-b border-teal-100 dark:border-teal-900/50">
-              <CardTitle className="text-2xl text-teal-800 dark:text-teal-300 flex items-center gap-2">
-                <PieChart className="h-6 w-6" />
-                Your Portfolio Analysis
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <p className="text-zinc-600 dark:text-zinc-400 mb-6">
-                Based on your financial profile, we've analyzed your portfolio to provide insights and recommendations.
-              </p>
+      <Card className="border-teal-100 dark:border-teal-900/50 shadow-md mb-8">
+        <CardHeader className="bg-gradient-to-r from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 border-b border-teal-100 dark:border-teal-900/50">
+          <CardTitle className="text-2xl text-teal-800 dark:text-teal-300 flex items-center gap-2">
+            <PieChart className="h-6 w-6" />
+            Your Portfolio Analysis
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <p className="text-zinc-600 dark:text-zinc-400 mb-6">
+            Based on your financial profile, we've analyzed your portfolio to provide insights and recommendations.
+          </p>
 
-              <PortfolioInsights analysisData={analysis} />
-            </CardContent>
-          </Card>
-        </TabsContent>
-        <TabsContent value="zerodha" className="pt-4">
-          <ZerodhaPortfolio />
-        </TabsContent>
-      </Tabs>
+          <PortfolioInsights analysisData={analysis} />
+        </CardContent>
+      </Card>
     </div>
   )
 }
