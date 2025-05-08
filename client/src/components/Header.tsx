@@ -4,6 +4,7 @@ import { User, ChevronDown } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
+import logo1 from "@/assets/logo1.png";
 export function Header() {
   const { isAuthenticated, user, logout } = useAuth();
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -37,8 +38,8 @@ export function Header() {
           <div className="flex items-center gap-6">
             <Link to="/" className="flex items-center">
               <img
-                src="/images/logo1.png"
-                alt="Artha AI Logo"
+                src={logo1}
+                alt=""
                 className="h-10 w-auto"
               />
               <span className="ml-2 font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-teal-600 to-emerald-600 dark:from-teal-400 dark:to-emerald-400 hidden sm:inline-block">
