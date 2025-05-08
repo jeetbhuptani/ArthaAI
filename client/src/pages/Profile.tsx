@@ -30,6 +30,8 @@ interface UserProfile {
   firstname: string;
   lastname: string;
   email: string;
+  currentPassword?: string;
+  newPassword?: string;
   profilePicture?: string;
 }
 import { toast } from "sonner";
@@ -97,7 +99,7 @@ export default function ProfilePage() {
     try {
       const token = localStorage.getItem("auth_token");
 
-      const response = await fetch(`${API_BASE_URL}/api/user/profile`, {
+      const response = await fetch(`${API_BASE_URL}/api/auth/profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

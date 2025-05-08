@@ -28,7 +28,7 @@ export function ProtectedRoute({
   }
 
   if (isAuthenticated && user?.hasCompletedWizard === false) {
-    return <Navigate to="/form" />;
+    <Navigate to="/form" />;
   }
 
   return <>{children}</>;
