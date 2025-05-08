@@ -4,7 +4,7 @@ import { User, ChevronDown } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
-import Logo from "../assets/logo.png";
+import Logo from "../assets/logo1.png";
 export function Header() {
   const { isAuthenticated, user, logout } = useAuth();
   const [dropdownVisible, setDropdownVisible] = useState(false);
