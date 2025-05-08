@@ -67,15 +67,10 @@ export default function UploadCSV({ onFileSelect }: Props) {
           </div>
         )}
       </div>
-      
       {selectedFile && (
-        <Button 
-          onClick={() => onFileSelect(selectedFile)}
-          className="w-full bg-teal-600 hover:bg-teal-700 dark:bg-teal-700 dark:hover:bg-teal-600"
-        >
-          <FileText className="h-4 w-4 mr-2" />
-          Process {selectedFile.name}
-        </Button>
+        <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2">
+          File size: {(selectedFile.size / 1024).toFixed(2)} KB
+        </p>
       )}
     </div>
   );

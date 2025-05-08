@@ -42,6 +42,8 @@ function LearningChat() {
   >([]);
   const [showSavedConversations, setShowSavedConversations] = useState(false);
   const [preferUserData, setPreferUserData] = useState(false);
+  const speechActiveRef = useRef<boolean>(true); 
+  
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chat]);
@@ -114,6 +116,26 @@ function LearningChat() {
     checkAuthStatus();
   }, [API_BASE_URL]);
 
+  useEffect(() => {
+    // Handle voice loading
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      // This event fires when voices are loaded and available
+      const handleVoicesChanged = () => {
+        const allVoices = window.speechSynthesis.getVoices();
+        console.log("Available voices:", allVoices.map(v => `${v.name} (${v.lang})`));
+      };
+      
+      window.speechSynthesis.onvoiceschanged = handleVoicesChanged;
+      
+      // Initial check for already loaded voices
+      handleVoicesChanged();
+      
+      return () => {
+        window.speechSynthesis.onvoiceschanged = null;
+      };
+    }
+  }, []);
+
   const sendQuestion = async (questionText: string = question) => {
     if (!questionText.trim() || isLoading) return;
 
@@ -185,6 +207,8 @@ function LearningChat() {
     if (e.key === "Enter") sendQuestion();
   };
 
+  
+
   const resetChat = () => {
     setChat([]);
     setConversationId(null); // Clear the conversation ID
@@ -192,50 +216,103 @@ function LearningChat() {
       inputRef.current?.focus();
     }, 100);
   };
+
   const speakText = (text: string) => {
     if (!speechEnabled) return;
-
+    speechActiveRef.current = true; 
     // Cancel any ongoing speech
     window.speechSynthesis.cancel();
-
-    // Create a new utterance
-    const utterance = new SpeechSynthesisUtterance(text);
-
+    
+    // Clean text for speech synthesis
+    let cleanedText = text
+      .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
+      .replace(/```[\s\S]*?```/g, 'Code example omitted for speech.')
+      .replace(/<[^>]*>/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+    
+    // Break text into smaller chunks at sentence boundaries
+    const sentenceBreaks = cleanedText.match(/[^.!?]+[.!?]+/g) || [];
+    const chunks = sentenceBreaks.length > 0 ? sentenceBreaks : [cleanedText];
+    
+    // Store chunks and current index in component state/refs
+    const speechQueue = [...chunks];
+    let currentIndex = 0;
+    
+    // Keep track of all utterances to prevent garbage collection
+    const utterances: SpeechSynthesisUtterance[] = [];
+    
+    // Set speaking state at start
+    setIsSpeaking(true);
+    
     // Get available voices
-    const voices = window.speechSynthesis.getVoices();
-
-    // Try to find an Indian English voice, fallback to a female English voice
-    const indianVoice = voices.find(
-      (voice) => voice.lang.includes("en-IN") || voice.lang.includes("hi-IN")
+    let voices = window.speechSynthesis.getVoices();
+    const hindiVoice = voices.find(voice => voice.lang === 'hi-IN');
+    const indianEnglishVoice = voices.find(voice => voice.lang === 'en-IN');
+    const britishVoice = voices.find(voice => voice.lang === 'en-GB');
+    const femaleVoice = voices.find(voice => 
+      voice.lang.includes('en') && 
+      (voice.name.includes('Female') || voice.name.includes('female'))
     );
-    const femaleVoice = voices.find(
-      (voice) => voice.lang.includes("en") && voice.name.includes("Female")
-    );
-
-    utterance.voice = indianVoice || femaleVoice || voices[0];
-    utterance.rate = 1.0;
-    utterance.pitch = 1.0;
-
-    utterance.onstart = () => {
-      setIsSpeaking(true);
+    const selectedVoice = hindiVoice || indianEnglishVoice || britishVoice || femaleVoice || voices[0];
+    
+    // Function to speak the next chunk
+    const speakNextChunk = () => {
+      if (currentIndex >= speechQueue.length) {
+        setIsSpeaking(false);
+        return;
+      }
+      
+      const chunk = speechQueue[currentIndex];
+      const utterance = new SpeechSynthesisUtterance(chunk);
+      
+      // Configure utterance
+      utterance.voice = selectedVoice;
+      utterance.rate = 0.9;
+      utterance.pitch = 1.1;
+      
+      utterance.onend = () => {
+        currentIndex++;
+        
+      if(!speechActiveRef.current || !speechEnabled) {
+        setIsSpeaking(false);
+        return;
+      }
+        // Small timeout before speaking next chunk to prevent Chrome bugs
+        setTimeout(() => {
+          if (speechEnabled) {
+            speakNextChunk();
+          }
+        }, 50);
+      };
+      
+      utterance.onerror = (event) => {
+        console.error("Speech synthesis error", event);
+        setIsSpeaking(false);
+      };
+      
+      // Store reference to prevent garbage collection
+      utterances.push(utterance);
+      speechSynthesisRef.current = utterance;
+      
+      // Speak the chunk
+      window.speechSynthesis.speak(utterance);
     };
-
-    utterance.onend = () => {
+    
+    // Start speaking
+    speakNextChunk();
+    
+    // Return a function to cancel speech if needed
+    return () => {
+      window.speechSynthesis.cancel();
       setIsSpeaking(false);
     };
-
-    utterance.onerror = (event) => {
-      console.error("Speech synthesis error", event);
-      setIsSpeaking(false);
-    };
-
-    speechSynthesisRef.current = utterance;
-    window.speechSynthesis.speak(utterance);
   };
 
   const toggleSpeech = () => {
     setSpeechEnabled(!speechEnabled);
     if (isSpeaking) {
+      speechActiveRef.current = false; 
       window.speechSynthesis.cancel();
       setIsSpeaking(false);
     }
