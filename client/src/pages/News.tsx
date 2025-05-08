@@ -54,7 +54,7 @@ const News = () => {
   const [summarizing, setSummarizing] = useState(false);
   const [playing, setPlaying] = useState(false);
   const API_BASE_URL =
-    import.meta.env.VITE_API_URL || "";
+    import.meta.env.VITE_API_URL || "https://mern-backend-166800957423.us-central1.run.app";
   // Fetch news on component mount
   useEffect(() => {
     fetchNews();

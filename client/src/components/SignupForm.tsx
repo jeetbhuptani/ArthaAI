@@ -8,7 +8,7 @@ import { useAuth } from "@/context/AuthContext";
 export default function SignupForm() {
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const API_BASE_URL = import.meta.env.VITE_API_URL || "";
+  const API_BASE_URL = import.meta.env.VITE_API_URL || "https://mern-backend-166800957423.us-central1.run.app";
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",

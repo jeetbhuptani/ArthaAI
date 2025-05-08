@@ -33,7 +33,7 @@ function LearningChat() {
   const [speechEnabled, setSpeechEnabled] = useState(true);
   const speechSynthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
   const API_BASE_URL =
-    import.meta.env.VITE_API_URL || "";
+    import.meta.env.VITE_API_URL || "https://mern-backend-166800957423.us-central1.run.app";
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);

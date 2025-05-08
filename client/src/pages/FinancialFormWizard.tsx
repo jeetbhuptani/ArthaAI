@@ -47,7 +47,7 @@ export default function FinancialFormWizard() {
     return stored ? JSON.parse(stored) : {};
   });
   const API_BASE_URL =
-    import.meta.env.VITE_API_URL || "";
+    import.meta.env.VITE_API_URL || "https://mern-backend-166800957423.us-central1.run.app";
   const next = () => setStep((s) => Math.min(s + 1, steps.length - 1));
   const back = () => setStep((s) => Math.max(s - 1, 0));
 

@@ -30,7 +30,7 @@ export default function TaxFillingWizard() {
   const [loading, setLoading] = useState(false);
   const [fetchingSuggestions, setFetchingSuggestions] = useState(false);
   const API_BASE_URL =
-    import.meta.env.VITE_API_URL || "";
+    import.meta.env.VITE_API_URL || "https://mern-backend-166800957423.us-central1.run.app";
 
   // Fetch AI suggestions when summary is available
   useEffect(() => {

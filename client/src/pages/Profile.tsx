@@ -49,7 +49,7 @@ export default function ProfilePage() {
 
   // Use environment variables properly for React
   const API_BASE_URL =
-    import.meta.env.VITE_API_URL || "";
+    import.meta.env.VITE_API_URL || "https://mern-backend-166800957423.us-central1.run.app";
 
   useEffect(() => {
     fetchUserProfile();
