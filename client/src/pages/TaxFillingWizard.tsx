@@ -29,9 +29,6 @@ export default function TaxFillingWizard() {
   const [suggestions, setSuggestions] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [fetchingSuggestions, setFetchingSuggestions] = useState(false);
-  const API_BASE_URL =
-    import.meta.env.VITE_API_URL || "https://mern-backend-166800957423.us-central1.run.app";
-
   // Fetch AI suggestions when summary is available
   useEffect(() => {
     if (step === 2 && summary) {
@@ -44,7 +41,7 @@ export default function TaxFillingWizard() {
       setFetchingSuggestions(true);
       const token = localStorage.getItem("auth_token");
       const { data } = await axios.get(
-        `${API_BASE_URL}/api/tax/ai-suggestions`,
+        `/api/tax/ai-suggestions`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -73,7 +70,7 @@ export default function TaxFillingWizard() {
         const formData = new FormData();
         formData.append("file", csvFile);
 
-        await axios.post(`${API_BASE_URL}/api/tax/upload`, formData, {
+        await axios.post(`/api/tax/upload`, formData, {
           headers: {
             ...config.headers,
             "Content-Type": "multipart/form-data",
@@ -84,7 +81,7 @@ export default function TaxFillingWizard() {
       } else if (step === 1) {
         setLoading(true);
         const { data } = await axios.get(
-          `${API_BASE_URL}/api/tax/calculate`,
+          `/api/tax/calculate`,
           config
         );
         setSummary(data);
@@ -103,7 +100,7 @@ export default function TaxFillingWizard() {
       setLoading(true);
 
       // Use axios to get the PDF file with proper headers
-      const response = await axios.get(`${API_BASE_URL}/api/tax/download-pdf`, {
+      const response = await axios.get(`/api/tax/download-pdf`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

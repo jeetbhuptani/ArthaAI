@@ -46,8 +46,6 @@ export default function FinancialFormWizard() {
     const stored = localStorage.getItem("financialFormData");
     return stored ? JSON.parse(stored) : {};
   });
-  const API_BASE_URL =
-    import.meta.env.VITE_API_URL || "https://mern-backend-166800957423.us-central1.run.app";
   const next = () => setStep((s) => Math.min(s + 1, steps.length - 1));
   const back = () => setStep((s) => Math.max(s - 1, 0));
 
@@ -65,7 +63,7 @@ export default function FinancialFormWizard() {
   //Get FinancialFormData from Backend API
   const getFinancialFormData = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/user/get-wizard-data`, {
+      const response = await fetch(`/api/user/get-wizard-data`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -87,7 +85,7 @@ export default function FinancialFormWizard() {
   // In FinancialFormWizard.tsx
   const handleSubmit = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/user/complete-wizard`, {
+      const response = await fetch(`/api/user/complete-wizard`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

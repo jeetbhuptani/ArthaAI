@@ -17,12 +17,11 @@ export default function Dashboard() {
   const [analysis, setAnalysis] = useState<AnalysisData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const API_BASE_URL = import.meta.env.VITE_API_URL || "https://mern-backend-166800957423.us-central1.run.app"
 
   useEffect(() => {
     const fetchAnalysis = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/analysis`, {
+        const response = await fetch(`/api/analysis`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

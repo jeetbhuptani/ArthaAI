@@ -48,8 +48,6 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("profile");
 
   // Use environment variables properly for React
-  const API_BASE_URL =
-    import.meta.env.VITE_API_URL || "https://mern-backend-166800957423.us-central1.run.app";
 
   useEffect(() => {
     fetchUserProfile();
@@ -65,7 +63,7 @@ export default function ProfilePage() {
         return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+      const response = await fetch(`/api/auth/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -99,7 +97,7 @@ export default function ProfilePage() {
     try {
       const token = localStorage.getItem("auth_token");
 
-      const response = await fetch(`${API_BASE_URL}/api/auth/profile`, {
+      const response = await fetch(`/api/auth/profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -137,7 +135,7 @@ export default function ProfilePage() {
     try {
       const token = localStorage.getItem("auth_token");
 
-      const response = await fetch(`${API_BASE_URL}/api/auth/account`, {
+      const response = await fetch(`/api/auth/account`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

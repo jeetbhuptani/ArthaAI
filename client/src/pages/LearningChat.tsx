@@ -32,8 +32,6 @@ function LearningChat() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [speechEnabled, setSpeechEnabled] = useState(true);
   const speechSynthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
-  const API_BASE_URL =
-    import.meta.env.VITE_API_URL || "https://mern-backend-166800957423.us-central1.run.app";
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -93,7 +91,7 @@ function LearningChat() {
         }
 
         // Use the verify endpoint instead of status
-        const response = await fetch(`${API_BASE_URL}/api/auth/verify`, {
+        const response = await fetch(`/api/auth/verify`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -114,7 +112,7 @@ function LearningChat() {
     };
 
     checkAuthStatus();
-  }, [API_BASE_URL]);
+  }, []);
 
   useEffect(() => {
     // Handle voice loading
@@ -157,7 +155,7 @@ function LearningChat() {
       }
 
       // Always send the request with the same structure, just toggle preferUserData flag
-      const res = await fetch(`${API_BASE_URL}/api/ask`, {
+      const res = await fetch(`/api/ask`, {
         method: "POST",
         headers,
         body: JSON.stringify({
@@ -337,7 +335,7 @@ function LearningChat() {
           ? firstUserMessage.substring(0, 30) + "..."
           : firstUserMessage;
 
-      const response = await fetch(`${API_BASE_URL}/api/ask/save`, {
+      const response = await fetch(`/api/ask/save`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -376,7 +374,7 @@ function LearningChat() {
         throw new Error("Authentication token not found");
       }
 
-      const response = await fetch(`${API_BASE_URL}/api/ask/conversations`, {
+      const response = await fetch(`/api/ask/conversations`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -403,7 +401,7 @@ function LearningChat() {
       }
 
       const response = await fetch(
-        `${API_BASE_URL}/api/ask/conversations/${id}`,
+        `/api/ask/conversations/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -435,7 +433,7 @@ function LearningChat() {
       }
 
       const response = await fetch(
-        `${API_BASE_URL}/api/ask/conversations/${id}`,
+        `/api/ask/conversations/${id}`,
         {
           method: "DELETE",
           headers: {

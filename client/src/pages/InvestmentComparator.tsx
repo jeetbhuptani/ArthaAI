@@ -197,8 +197,6 @@ export default function InvestmentComparator() {
   const [loading, setLoading] = useState<boolean>(true);
   const [aiSummary, setAiSummary] = useState<string>("");
   const [summaryLoading, setSummaryLoading] = useState<boolean>(false);
-  const API_BASE_URL =
-    import.meta.env.VITE_API_URL || "https://mern-backend-166800957423.us-central1.run.app";
   // Fetch real-time rates
   useEffect(() => {
     const fetchRealTimeRates = async () => {
@@ -206,7 +204,7 @@ export default function InvestmentComparator() {
       try {
         // In a real implementation, fetch from your API
         const response = await axios.get(
-          `${API_BASE_URL}/api/compare/investment-rates`
+          `/api/compare/investment-rates`
         );
         setRealTimeRates(response.data);
       } catch (error) {
@@ -369,7 +367,7 @@ export default function InvestmentComparator() {
       };
 
       const response = await axios.post(
-        `${API_BASE_URL}/api/compare/generate-investment-summary`,
+        `/api/compare/generate-investment-summary`,
         {
           data: summaryData,
         }

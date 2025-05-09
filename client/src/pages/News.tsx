@@ -53,9 +53,6 @@ const News = () => {
   const [aiSummary, setAiSummary] = useState<string | null>(null);
   const [summarizing, setSummarizing] = useState(false);
   const [playing, setPlaying] = useState(false);
-  const API_BASE_URL =
-    import.meta.env.VITE_API_URL || "https://mern-backend-166800957423.us-central1.run.app";
-  // Fetch news on component mount
   useEffect(() => {
     fetchNews();
   }, []);
@@ -64,7 +61,7 @@ const News = () => {
     setLoading(true);
     try {
       const response = await axios.get<NewsResponse>(
-        `${API_BASE_URL}/api/news/finance-india`
+        `/api/news/finance-india`
       );
       setNews(response.data.news);
       setError(null);
