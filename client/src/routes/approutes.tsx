@@ -13,7 +13,8 @@ import Profile from "@/pages/Profile";
 export const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/about" element={<About />} />
+      <Route path="/" element={<About />} />
+      <Route path="/arthaai/index.html" element={<About />} />
       <Route path="/learning" element={<LearningChat />} />
       <Route
         path="/form"
@@ -25,7 +26,7 @@ export const AppRoutes = () => {
       />
       <Route path="/authentication" element={<Authentication />} />
       <Route
-        path="/"
+        path="/dashboard"
         element={
           <ProtectedRoute>
             <Dashboard />

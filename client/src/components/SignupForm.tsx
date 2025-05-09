@@ -8,7 +8,6 @@ import { useAuth } from "@/context/AuthContext";
 export default function SignupForm() {
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const API_BASE_URL = import.meta.env.VITE_API_URL || "https://mern-backend-166800957423.us-central1.run.app";
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -37,8 +36,7 @@ export default function SignupForm() {
     setError(""); // Clear previous errors
 
     try {
-      console.log(`${API_BASE_URL}`);
-      const response = await fetch(`${API_BASE_URL}/api/auth/signup`, {
+      const response = await fetch(`/api/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

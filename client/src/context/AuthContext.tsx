@@ -32,9 +32,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
   // Check if user is already logged in
   useEffect(() => {
     const checkAuthStatus = async () => {
@@ -47,7 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         // Verify token validity
-        const response = await fetch(`${API_BASE_URL}/api/auth/verify`, {
+        const response = await fetch(`/api/auth/verify`, {
           headers: {
             Authorization: `Bearer ${storedToken}`,
           },
@@ -70,7 +67,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     checkAuthStatus();
-  }, [API_BASE_URL]);
+  }, []);
 
   const login = async (newToken: string) => {
     try {
@@ -79,7 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setToken(newToken);
 
       // Fetch user data
-      const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+      const response = await fetch(`/api/auth/me`, {
         headers: {
           Authorization: `Bearer ${newToken}`,
         },

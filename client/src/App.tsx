@@ -10,7 +10,7 @@ import { Toaster } from "@/components/ui/sonner";
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/client/dist/">
       <LoadingProvider>
           <AuthProvider>
             <div className="w-full mx-auto min-h-screen flex flex-col">

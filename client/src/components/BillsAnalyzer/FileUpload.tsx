@@ -12,8 +12,6 @@ const FileUpload = () => {
   const [explanation, setExplanation] = useState<string>('');
   const [isExplaining, setIsExplaining] = useState(false);
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || "https://mern-backend-166800957423.us-central1.run.app";
-
   const onDrop = (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     setFile(file);
@@ -36,7 +34,7 @@ const FileUpload = () => {
     const formData = new FormData();
     formData.append('file', file);
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/upload`, formData, {
+      const response = await axios.post(`/api/upload`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       const text = response.data.text;
@@ -52,7 +50,7 @@ const FileUpload = () => {
   const fetchExplanation = async (text: string) => {
     setIsExplaining(true);
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/explain`, { extractedText: text });
+      const response = await axios.post(`/api/explain`, { extractedText: text });
       setExplanation(response.data.explanation);
     } catch (error) {
       console.error('Error getting explanation', error);

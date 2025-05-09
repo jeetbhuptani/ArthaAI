@@ -15,7 +15,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'https://mern-backend-166800957423.us-central1.run.app',
         changeOrigin: true,
         secure: false,
       },

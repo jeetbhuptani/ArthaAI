@@ -15,13 +15,12 @@ export default function LoginForm() {
     });
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
-    const API_BASE_URL = import.meta.env.VITE_API_URL || "https://mern-backend-166800957423.us-central1.run.app";
 
     // Redirect if already authenticated
     useEffect(() => {
         if (isAuthenticated) {
             // Redirect to the page they were trying to access or dashboard
-            const from = location.state?.from?.pathname || "/";
+            const from = location.state?.from?.pathname || "/dashboard";
             navigate(from);
         }
     }, [isAuthenticated, navigate, location]);
@@ -36,7 +35,7 @@ export default function LoginForm() {
         setLoading(true);
 
         try {
-            const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+            const response = await fetch(`/api/auth/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
