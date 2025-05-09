@@ -66,7 +66,7 @@ export default function SignupForm() {
           Welcome to ArthaAI
         </h2>
         <p className="text-neutral-600 text-sm max-w-sm mx-auto dark:text-neutral-300 mt-2">
-          Create your account to start your financial journey
+          Create your account to start your financial journey - go to login for demo purpose
         </p>
       </div>
 

@@ -10,8 +10,8 @@ export default function LoginForm() {
     const navigate = useNavigate();
     const location = useLocation();
     const [formData, setFormData] = useState({
-        email: "",
-        password: "",
+        email: "jeet@gmail.com",
+        password: "Jeet@563",
     });
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
@@ -70,7 +70,7 @@ export default function LoginForm() {
                     Welcome Back to ArthaAI
                 </h2>
                 <p className="text-neutral-600 text-sm max-w-sm mx-auto dark:text-neutral-300 mt-2">
-                    Log in to continue your financial journey
+                    Log in to continue your financial journey - Credentials prepopulated for demo purposes.
                 </p>
             </div>
 
@@ -87,7 +87,7 @@ export default function LoginForm() {
                         id="email"
                         placeholder="you@example.com"
                         type="email"
-                        value={formData.email}
+                        value={formData.email} 
                         onChange={handleChange}
                         className="h-10 text-black dark:text-white"
                         required
