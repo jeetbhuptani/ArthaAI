@@ -38,7 +38,7 @@ export function Header() {
           <div className="flex items-center gap-6">
             <Link to="/" className="flex items-center">
               <img
-                src={logo1}
+                src="/images/logo1.png"
                 alt="Artha AI Logo"
                 className="h-10 w-auto"
               />

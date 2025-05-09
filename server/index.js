@@ -21,8 +21,23 @@ if (!process.env.MONGO_URI) {
   process.exit(1);
 }
 
-const app = express();
-app.use(cors());
+const allowedOrigins = [
+  'http://localhost:5173', // vite dev
+  'https://storage.googleapis.com', // production bucket
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 
 app.use(json());
 
