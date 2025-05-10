@@ -64,15 +64,36 @@ npm install
 
 Create `.env` file in the server directory with the following variables:
 ```
-MONGO_URI=your_mongodb_uri
-GEMINI_API_KEY=your_gemini_api_key
-JWT_SECRET=your_jwt_secret
-CLIENT_URL=http://localhost:5173
+#Environment Configuration
+PORT=5000
+
+#Database Configuration
+MONGO_URI=your mongodb url
+
+#Gemini API Configuration
+GEMINI_API_KEY=your gemini api key - model 2.0 flash
+GEMINI_API_KEY2=your gemini api key - model 2.0 flash
+
+#Authentication Configuration
+JWT_SECRET=your key
+
+#Investment Rates API Configuration
+ALPHA_VANTAGE_API_KEY= https://www.alphavantage.co/
+MARKETSTACK_API_KEY=http://marketstack.com/
+
+# News API Configuration
+WORLD_NEWS_API_KEY=https://worldnewsapi.com/
 ```
 
-Create `.env.local` file in the client directory:
+Set `vite.config.js` file in the client directory:
 ```
-VITE_API_BASE_URL=http://localhost:5000
+proxy: {
+      '/api': {
+        target: 'your backend url',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
 ```
 
 5. Run the application
