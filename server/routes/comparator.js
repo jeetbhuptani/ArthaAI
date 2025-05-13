@@ -6,7 +6,6 @@ import {
 
 const router = express.Router();
 
-// Routes for investment comparison tools
 router.get("/investment-rates", getInvestmentRates);
 router.post("/generate-investment-summary", generateInvestmentSummary);
 

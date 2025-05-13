@@ -2,7 +2,6 @@ import axios from "axios";
 import NodeCache from "node-cache";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// Initialize the Google Generative AI client
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY2);
 // Cache news data for 15 minutes to avoid hitting API limits
 const newsCache = new NodeCache({ stdTTL: 900 });

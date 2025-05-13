@@ -1,7 +1,7 @@
 import express, { json } from 'express';
 import cors from 'cors';
 import { config } from 'dotenv';
-import { connect } from 'mongoose';
+import connectDB from './config/db.js';
 import auth from './routes/auth.js';
 import wizard from './routes/wizard.js';
 import analysisRoutes from "./routes/analysis.js";
@@ -12,24 +12,16 @@ import taxRoute from './routes/tax.js';
 import compareRoute from './routes/comparator.js';
 import newsRoute from './routes/news.js';
 import path from 'path';
+
 // Load environment variables
 config();
 const app = express();
+
+//middlewares
 app.use(json());
 app.use(cors());
 
-
-// MongoDB connection with error handling
-const connectDB = async () => {
-  try {
-    await connect(process.env.MONGO_URI);
-    console.log('MongoDB connected successfully');
-  } catch (err) {
-    console.error('MongoDB connection error:', err.message);
-    process.exit(1);
-  }
-}
-
+// For Deployment
 const __dirname = path.resolve();
 
 // Initialize database connection

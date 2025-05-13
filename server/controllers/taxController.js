@@ -8,6 +8,40 @@ import path from "path";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
+async function getTaxSummary(userId) {
+  const entries = await FinancialEntry.aggregate([
+    { $match: { userId } },
+    { $sort: { date: -1, _id: -1 } },
+    {
+      $group: {
+        _id: {
+          date: "$date",
+          category: "$category",
+          description: "$description",
+        },
+        doc: { $first: "$$ROOT" },
+      },
+    },
+    { $replaceRoot: { newRoot: "$doc" } },
+  ]);
+
+  let totalIncome = 0, totalExpenses = 0, gstCredit = 0;
+  entries.forEach((entry) => {
+    if (entry.category === "income") {
+      totalIncome += entry.amount;
+    } else {
+      totalExpenses += entry.amount;
+      if (entry.gstIncluded) {
+        gstCredit += (entry.amount * 0.18) / 1.18;
+      }
+    }
+  });
+
+  const gstPayable = totalIncome * 0.18;
+  const netGst = gstPayable - gstCredit;
+  return { entries, totalIncome, totalExpenses, gstCredit, gstPayable, netGst };
+}
+
 export async function addEntry(req, res) {
   const entry = new FinancialEntry({ ...req.body, userId: req.user._id });
   await entry.save();
@@ -114,55 +148,16 @@ export async function uploadCSV(req, res) {
 
 export async function calculateTax(req, res) {
   try {
-    // Find latest entry for each unique (date, category, description) combination for this user
-    const entries = await FinancialEntry.aggregate([
-      { $match: { userId: req.user._id } },
-      { $sort: { date: -1, _id: -1 }, },
-      {
-        $group: {
-          _id: {
-            date: "$date",
-            category: "$category",
-            description: "$description",
-          },
-          doc: { $first: "$$ROOT" },
-        },
-      },
-      { $replaceRoot: { newRoot: "$doc" } },
-    ]);
-    let totalIncome = 0,
-      totalExpenses = 0,
-      gstCredit = 0;
+    const { totalIncome, totalExpenses, gstCredit, gstPayable, netGst } =
+      await getTaxSummary(req.user._id);
 
-    entries.forEach((entry) => {
-      if (entry.category === "income") totalIncome += entry.amount;
-      else {
-        totalExpenses += entry.amount;
-        if (entry.gstIncluded) {
-          // Calculate GST component (assuming 18% GST)
-          const gstAmount = (entry.amount * 0.18) / 1.18;
-          gstCredit += gstAmount;
-        }
-      }
-    });
-
-    const gstPayable = totalIncome * 0.18;
-    const netGst = gstPayable - gstCredit;
-
-    res.json({
-      totalIncome,
-      totalExpenses,
-      gstPayable,
-      gstCredit,
-      netGst,
-    });
+    res.json({ totalIncome, totalExpenses, gstCredit, gstPayable, netGst });
   } catch (error) {
     console.error("Tax calculation error:", error);
     res.status(500).send({ success: false, error: error.message });
   }
 }
 
-// Add the missing generatePDF function
 export async function generatePDF(req, res) {
   try {
     // Get tax data
@@ -247,79 +242,51 @@ export async function generatePDF(req, res) {
   }
 }
 
-// Add the missing getSuggestions function
 export async function getSuggestions(req, res) {
   try {
-    const entries = await FinancialEntry.find({ userId: req.user._id });
+    const { entries, totalIncome, totalExpenses, gstCredit, gstPayable, netGst } =
+      await getTaxSummary(req.user._id);
 
-    // Calculate summary metrics
-    let totalIncome = 0,
-      totalExpenses = 0,
-      gstCredit = 0;
     const categories = {};
-
     entries.forEach((entry) => {
-      if (entry.category === "income") {
-        totalIncome += entry.amount;
-      } else {
-        totalExpenses += entry.amount;
-
-        // Track spending by category
-        if (!categories[entry.description]) {
-          categories[entry.description] = 0;
-        }
-        categories[entry.description] += entry.amount;
-
-        if (entry.gstIncluded) {
-          const gstAmount = (entry.amount * 0.18) / 1.18;
-          gstCredit += gstAmount;
-        }
+      if (entry.category !== "income") {
+        categories[entry.description] = (categories[entry.description] || 0) + entry.amount;
       }
     });
 
-    const gstPayable = totalIncome * 0.18;
-    const netGst = gstPayable - gstCredit;
-
-    // Generate AI suggestions using the financial data
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-
-    const prompt = `
-    You are an AI tax advisor for Indian taxpayers. Based on the following financial data, provide 3-5 personalized tax optimization suggestions:
-    
-    Total Income: ₹${totalIncome.toFixed(2)}
-    Total Expenses: ₹${totalExpenses.toFixed(2)}
-    GST Payable: ₹${gstPayable.toFixed(2)}
-    GST Credit: ₹${gstCredit.toFixed(2)}
-    Net GST: ₹${netGst.toFixed(2)}
-    
-    Main expense categories:
-    ${Object.entries(categories)
+    const topCats = Object.entries(categories)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5)
-      .map(([category, amount]) => `${category}: ₹${amount.toFixed(2)}`)
-      .join("\n")}
-    
-    Provide specific, actionable suggestions for tax optimization based on Indian tax laws, including GST optimization, income tax deductions under sections like 80C, 80D, and other applicable sections.
-    Limit your response to 5 concise bullet points.
+      .map(([cat, amt]) => `${cat}: ₹${amt.toFixed(2)}`)
+      .join("\n");
+
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const prompt = `
+You are an AI tax advisor for Indian taxpayers. Based on the following:
+Total Income: ₹${totalIncome.toFixed(2)}
+Total Expenses: ₹${totalExpenses.toFixed(2)}
+GST Payable: ₹${gstPayable.toFixed(2)}
+GST Credit: ₹${gstCredit.toFixed(2)}
+Net GST: ₹${netGst.toFixed(2)}
+
+Main expense categories:
+${topCats}
+
+Provide 3-5 concise, actionable tax optimization tips (GST, 80C, 80D, etc.).
     `;
 
     try {
       const result = await model.generateContent(prompt);
-      const suggestions = result.response.text();
-
-      res.json({ suggestions });
+      res.json({ suggestions: result.response.text() });
     } catch (aiError) {
       console.error("AI suggestion error:", aiError);
       res.json({
         suggestions:
-          "Unable to generate AI suggestions at this time. Please review your financial data with a tax professional.",
+          "Unable to generate AI suggestions at this time. Please consult a tax professional.",
       });
     }
   } catch (error) {
     console.error("Error generating suggestions:", error);
-    res.status(500).json({
-      error: error.message,
-      suggestions: "Error processing your financial data.",
-    });
+    res.status(500).json({ error: error.message });
   }
 }

@@ -28,6 +28,5 @@ const FinancialEntrySchema = new mongoose.Schema({
   }
 });
 
-// Create and export the model
 const FinancialEntry = mongoose.model('FinancialEntry', FinancialEntrySchema);
 export default FinancialEntry;

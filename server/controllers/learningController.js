@@ -3,34 +3,13 @@ import { config } from "dotenv";
 import { v4 as uuidv4 } from "uuid";
 import mongoose from "mongoose";
 import { verifyToken } from "../utils/jwtHelper.js";
+import Conversation from "../models/Conversation.js";
 config();
 
 // Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// Define MongoDB Schema and Model (add this near the top of your file or in a separate models file)
-const conversationSchema = new mongoose.Schema({
-  id: { type: String, required: true, unique: true },
-  userId: { type: String, required: true },
-  title: { type: String, required: true },
-  messages: [
-    {
-      type: { type: String, enum: ["user", "bot"], required: true },
-      text: { type: String, required: true },
-    },
-  ],
-  saved: { type: Boolean, default: false },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
-});
 
-// Create indexes for efficient queries
-conversationSchema.index({ userId: 1, saved: 1 });
-
-// Create or get the model
-const Conversation =
-  mongoose.models.Conversation ||
-  mongoose.model("Conversation", conversationSchema);
 
 const SYSTEM_PROMPT = `
 You are Artha AI, a warm, friendly Indian financial coach who simplifies money matters.

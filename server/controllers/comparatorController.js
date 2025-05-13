@@ -71,7 +71,7 @@ export const getInvestmentRates = async (req, res) => {
     
     // Gold rates (using gold ETF as proxy)
     try {
-      const goldResponse = await axios.get(`http://api.marketstack.com/v1/eod?access_key=${process.env.MARKETSTACK_API_KEY || "YOUR_FALLBACK_KEY"}&symbols=GOLDBEES.XNSE&limit=5`);
+      const goldResponse = await axios.get(`http://api.marketstack.com/v1/eod?access_key=${process.env.MARKETSTACK_API_KEY}&symbols=GOLDBEES.XNSE&limit=5`);
       if (goldResponse.data?.data?.length > 1) {
         const latestPrice = goldResponse.data.data[0].close;
         const previousPrice = goldResponse.data.data[4].close;
