@@ -18,12 +18,13 @@ const profileSchema = z
     firstName: z.string().min(2, "First name must be at least 2 characters"),
     lastName: z.string().min(2, "Last name must be at least 2 characters"),
     email: z.string().email("Please enter a valid email address"),
-    currentPassword: z.string().optional(),
+    currentPassword: z.string().transform(val => val === "" ? undefined : val).optional(),
     newPassword: z
       .string()
-      .min(8, "New password must be at least 8 characters")
+      .transform(val => val === "" ? undefined : val)
+      .pipe(z.string().min(8, "New password must be at least 8 characters").optional())
       .optional(),
-    confirmPassword: z.string().optional(),
+    confirmPassword: z.string().transform(val => val === "" ? undefined : val).optional(),
   })
   .refine(
     (data) => {
@@ -295,14 +296,14 @@ export function ProfileForm({ user, onSubmit, onCancel }: ProfileFormProps) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
             <Label
-              htmlFor="password"
+              htmlFor="currentPassword"
               className="text-sm text-zinc-700 dark:text-zinc-300"
             >
               Current Password
             </Label>
             <div className="relative">
               <Input
-                id="password"
+                id="currentPassword"
                 type={showPassword ? "text" : "password"}
                 {...register("currentPassword")}
                 placeholder="Leave blank to keep current"

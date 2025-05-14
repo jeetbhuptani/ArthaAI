@@ -109,7 +109,7 @@ export function InvestmentExperienceForm({ data, update }: InvestmentExperienceF
     <TooltipProvider>
       <Card className="border-teal-100 dark:border-teal-900/50 shadow-md">
         <CardHeader className="bg-gradient-to-r from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 border-b border-teal-100 dark:border-teal-900/50">
-          <CardTitle className="text-xl text-teal-800 dark:text-teal-300 flex items-center gap-2">
+          <CardTitle className="text-xl text-teal-800 dark:text-teal-300 flex items-center gap-2 mt-6">
             <Sliders className="h-5 w-5" />
             Investment Experience
           </CardTitle>

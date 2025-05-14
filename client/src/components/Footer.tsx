@@ -19,7 +19,7 @@ export function Footer() {
               <span className="sr-only">GitHub</span>
             </a>
             <a
-              href="#"
+              href="https://arthaai-7x8z.onrender.com/"
               className="text-zinc-600 hover:text-teal-600 dark:text-zinc-400 dark:hover:text-teal-400"
             >
               <Globe className="h-5 w-5" />

@@ -226,7 +226,7 @@ export default function AboutPage() {
                       "Simplifies complex financial concepts (SIP, EMI, credit scores)",
                       "Guides users to make better money decisions",
                       "Speaks in vernacular language (e.g., Hindi)",
-                      "Delivers experience via web or mobile using AWS cloud",
+                      "Delivers experience via web or mobile using cloud",
                     ].map((item, i) => (
                       <li key={i} className="flex items-start gap-2">
                         <span className="mt-1 flex-shrink-0 h-5 w-5 rounded-full bg-teal-100 dark:bg-teal-900/50 flex items-center justify-center">
@@ -292,7 +292,7 @@ export default function AboutPage() {
                   </CardContent>
                 </Card>
               </motion.div>
-            ))}
+            ))} 
           </motion.div>
         </div>
       </motion.section>

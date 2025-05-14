@@ -99,7 +99,7 @@ export default function FinancialFormWizard() {
         // localStorage.removeItem("financialFormData");
 
         // Redirect to dashboard
-        window.location.href = "/";
+        window.location.href = "/dashboard";
       } else {
         console.error("Failed to submit form");
       }
@@ -349,7 +349,7 @@ export default function FinancialFormWizard() {
           </motion.div>
         </AnimatePresence>
 
-        {step < 4 && (
+        {step <= 4 && (
           <div className="flex justify-between mt-6">
             <Button
               onClick={back}
